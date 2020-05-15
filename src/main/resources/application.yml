@@ -1,0 +1,10 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/vocabulary
+    username: postgres
+    password: qwerty
+    initialization-mode: always

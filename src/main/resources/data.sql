@@ -1,0 +1,51 @@
+insert into users values (101, 'TRONIX', 'klishin.d.a@gmail.com', '9031055324');
+
+insert into parts_of_speech values (101, 'Существительное');
+insert into parts_of_speech values (102, 'Прилагательное');
+insert into parts_of_speech values (103, 'Глагол');
+insert into parts_of_speech values (104, 'Наречие');
+insert into parts_of_speech values (105, 'Предлог');
+
+insert into russian_words values (10001, 'БЕЛЫЙ', null, 102);
+insert into russian_words values (10002, 'СИНИЙ', null, 102);
+insert into russian_words values (10003, 'ДЕЛАТЬ', 'создавать', 103);
+insert into russian_words values (10004, 'СТРЕЛЬБА', null, 101);
+insert into russian_words values (10005, 'КИНО', null, 101);
+insert into russian_words values (10006, 'СОГЛАСИЕ', null, 101);
+insert into russian_words values (10007, 'СООТВЕТСТВИЕ', null, 101);
+insert into russian_words values (10008, 'СОГЛАСНО', null, 104);
+insert into russian_words values (10009, 'СРЕДИ', null, 105);
+insert into russian_words values (10010, 'КРОМЕ ТОГО', null, null);
+insert into russian_words values (10011, 'ДОМАШНИЙ', null, null);
+insert into russian_words values (10012, 'НАБЛЮДАТЬ', null, null);
+insert into russian_words values (10013, 'ЛУК', 'оружие', 102);
+insert into russian_words values (10014, 'ЛУК', 'растение', 102);
+
+insert into english_words values (20001, 'WHITE', null, null);
+insert into english_words values (20002, 'DO', null, null);
+insert into english_words values (20003, 'MAKE', null, null);
+insert into english_words values (20004, 'SHOOTING', null, null);
+insert into english_words values (20005, 'CINEMA', null, null);
+insert into english_words values (20006, 'ACCORD', null, null);
+insert into english_words values (20007, 'ACCORDING TO', null, null);
+insert into english_words values (20008, 'AMONG', null, null);
+insert into english_words values (20009, 'ON TOP OF THAT', null, null);
+insert into english_words values (20010, 'DOMESTIC', null, null);
+insert into english_words values (20011, 'OBSERVE', null, null);
+insert into english_words values (20012, 'BOW', null, null);
+insert into english_words values (20013, 'ONION', null, null);
+
+insert into vocabulary values (30001, 101, 10001, 20001, current_date, null);
+insert into vocabulary values (30002, 101, 10003, 20002, current_date, null);
+insert into vocabulary values (30003, 101, 10003, 20003, current_date, 'руками ');
+insert into vocabulary values (30004, 101, 10004, 20004, current_date, null);
+insert into vocabulary values (30005, 101, 10005, 20005, current_date, null);
+insert into vocabulary values (30006, 101, 10006, 20006, current_date, null);
+insert into vocabulary values (30007, 101, 10007, 20006, current_date, null);
+insert into vocabulary values (30008, 101, 10008, 20007, current_date, null);
+insert into vocabulary values (30009, 101, 10009, 20008, current_date, null);
+insert into vocabulary values (30010, 101, 10010, 20009, current_date, null);
+insert into vocabulary values (30011, 101, 10011, 20010, current_date, null);
+insert into vocabulary values (30012, 101, 10012, 20011, current_date, null);
+insert into vocabulary values (30013, 101, 10013, 20012, current_date, null);
+insert into vocabulary values (30014, 101, 10014, 20013, current_date, null);
