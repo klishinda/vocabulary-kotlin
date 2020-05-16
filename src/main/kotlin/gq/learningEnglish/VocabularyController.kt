@@ -10,7 +10,7 @@ class VocabularyController (private val vocabularyService : VocabularyService) {
     @Bean
     fun start() {
         println("Start")
-        val rusWord = Word(445,"БЕЛЫЙ2", 102)
+        val rusWord = Word("БЕЛЫЙ2", 102, "Test")
         val addedId: Int = vocabularyService.addRussianWord(rusWord)
         println(addedId)
     }
