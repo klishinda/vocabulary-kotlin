@@ -10,8 +10,10 @@ class VocabularyController (private val vocabularyService : VocabularyService) {
     @Bean
     fun start() {
         println("Start")
-        val rusWord = Word("БЕЛЫЙ2", 102, "Test")
-        val addedId: Int = vocabularyService.addRussianWord(rusWord)
-        println(addedId)
+        val rusWord = Word(1, "БЕЛЫЙ2", 102)
+        val engWord = Word(2, "WHITE2", 101)
+        //val addedId: Int = vocabularyService.addRussianWord(rusWord)
+        val addedVocabularyId: Int = vocabularyService.addWordPair(rusWord, engWord, 101)
+        println("$addedVocabularyId ")
     }
 }
