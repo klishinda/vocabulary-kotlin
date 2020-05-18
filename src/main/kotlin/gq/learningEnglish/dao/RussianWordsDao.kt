@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class RussianWordsDao(private val jdbc: JdbcDao) {
-    fun getRussianWord(word: String?): List<Word>? {
+    fun getRussianWord(word: String?): Word? {
         val sqlParams = MapSqlParameterSource(mapOf("word" to word?.toUpperCase()))
         return jdbc.namedQuerySingle(GET_RUSSIAN_WORD_ID, sqlParams)
     }

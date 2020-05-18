@@ -6,8 +6,7 @@ class Word() {
     var description: String? = null
     var partOfSpeech: Int? = null
 
-    constructor (id: Long, name: String, partOfSpeech: Int) : this() {
-        this.id = id
+    constructor (name: String, partOfSpeech: Int) : this() {
         this.name = name
         this.partOfSpeech = partOfSpeech
     }

@@ -16,29 +16,26 @@ class VocabularyService(
         return russianWordsDao.addRussianWord(newWord)
     }
 
-    fun addWordPair(russianWord: Word, englishWord: Word, userId: Int) : Int {
-        val russianWords = russianWordsDao.getRussianWord(russianWord.name)
-        val englishWords = englishWordsDao.getEnglishWord(englishWord.name)
-        checkWords(russianWords, englishWords, russianWord, englishWord)
-        println("rusId: "+russianWord.id+", engId: "+englishWord.id)
-        return vocabularyDao.addVocabularyRecord(russianWord, englishWord, userId);
+    fun addEnglishWord(newWord: Word) : Int {
+        return englishWordsDao.addEnglishWord(newWord)
     }
 
-    private fun checkWords(
-        russianWords: List<Word>?,
-        englishWords: List<Word>?,
-        russianWord: Word,
-        englishWord: Word
-    ) {
-        if (russianWords == null) {
-            russianWord.id = russianWordsDao.addRussianWord(russianWord).toLong()
-        } else if (russianWords.size == 1) {
-            russianWord.id = russianWords[0].id
+    fun addWordPair(newRussianWord: Word, newEnglishWord: Word, userId: Int) : Int {
+        russianWordsDao.getRussianWord(newRussianWord.name).run{
+            if (this == null) {
+                newRussianWord.id = russianWordsDao.addRussianWord(newRussianWord).toLong()
+            } else {
+                newRussianWord.id = id
+            }
         }
-        if (englishWords == null) {
-            englishWord.id = englishWordsDao.addEnglishWord(englishWord).toLong()
-        } else if (englishWords.size == 1) {
-            englishWord.id = englishWords[0].id
+        englishWordsDao.getEnglishWord(newEnglishWord.name).run{
+            if (this == null) {
+                newEnglishWord.id = englishWordsDao.addEnglishWord(newEnglishWord).toLong()
+            } else {
+                newEnglishWord.id = id
+            }
         }
+        println("rusId: "+newRussianWord.id+", engId: "+newEnglishWord.id)
+        return vocabularyDao.addVocabularyRecord(newRussianWord, newEnglishWord, userId);
     }
 }
