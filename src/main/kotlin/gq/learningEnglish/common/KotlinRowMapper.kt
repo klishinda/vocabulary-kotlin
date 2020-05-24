@@ -12,6 +12,7 @@ import kotlin.reflect.*
 import kotlin.reflect.KTypeProjection.Companion.STAR
 import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaType
+
 class KotlinRowMapper<T : Any>(
         private val mappedClass: KClass<T>,
         private val jsonMapper: ObjectMapper = jacksonObjectMapper()
