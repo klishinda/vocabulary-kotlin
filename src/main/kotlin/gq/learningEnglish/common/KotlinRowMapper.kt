@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.support.JdbcUtils
 import java.sql.ResultSet
@@ -18,18 +17,12 @@ class KotlinRowMapper<T : Any>(
         private val jsonMapper: ObjectMapper = jacksonObjectMapper()
 ) : RowMapper<T>, Logger {
 
-    private var javaMode: Boolean = false
     private val dbFields = HashMap<String, Int>()
     private val mappedFields = HashMap<KParameter, Any?>()
-
-    constructor(mappedClass: KClass<T>, javaMode: Boolean) : this(mappedClass) {
-        this.javaMode = javaMode
-    }
 
     override fun mapRow(rs: ResultSet, rowNum: Int): T {
         return when {
             mappedClass.isData -> mapDataClass(rs)
-            javaMode -> BeanPropertyRowMapper(mappedClass.java).mapRow(rs, rowNum)
             else -> mapSimpleClass(rs)
         }
     }
