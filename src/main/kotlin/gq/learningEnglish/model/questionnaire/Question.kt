@@ -5,8 +5,7 @@ import gq.learningEnglish.model.AvailableLanguages
 
 data class Question (
     @DbField(value = "asking_language")
-    //var askingLanguage: AvailableLanguages? = null
-    var askingLanguage: String,
+    var askingLanguage: AvailableLanguages,
     @DbField(value = "asking_word_id")
     var askingWordId : Int,
     @DbField(value = "asking_word")

@@ -30,7 +30,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
         }
         println("$russianWordsNumber $englishWordsNumber")
         val result = vocabularyDao.getWordsForQuiz(russianWordsNumber, englishWordsNumber)
-        result.forEach { (k) -> println(k.askingWord) }
+        result.forEach { (k, v) -> println("$k   $v")}
         return result
     }
 }

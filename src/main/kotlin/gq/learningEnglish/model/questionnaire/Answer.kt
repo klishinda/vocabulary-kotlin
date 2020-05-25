@@ -9,5 +9,6 @@ data class Answer (
     var answerWordId : Int,
     @DbField(value = "answer_word")
     var answerWord: String?
-    //var result = false
-)
+) {
+    var result : Boolean = false
+}
