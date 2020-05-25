@@ -9,28 +9,33 @@ import kotlin.math.floor
 
 @Service
 class QuizService(private val vocabularyDao: VocabularyDao) {
+    var russianWordsCount = 0
+    var englishWordsCount = 0
+
     fun getRandomWords(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
-        var russianWordsNumber = 0
-        var englishWordsNumber = 0
+        getWordCount(numberOfRandomWords, wordsMode)
+        val result = vocabularyDao.getWordsForQuiz(russianWordsCount, englishWordsCount)
+        result.forEach { (k, v) -> println("$k   $v")}
+        return result
+    }
+
+    private fun getWordCount(numberOfRandomWords: Int, wordsMode: RandomWordsMode) {
         if (wordsMode == RandomWordsMode.ABSOLUTE_RANDOM) {
-            russianWordsNumber = floor(numberOfRandomWords / 2.toDouble()).toInt()
-            englishWordsNumber = floor(numberOfRandomWords / 2.toDouble()).toInt()
+            russianWordsCount = floor(numberOfRandomWords / 2.toDouble()).toInt()
+            englishWordsCount = floor(numberOfRandomWords / 2.toDouble()).toInt()
             if ((numberOfRandomWords % 2) == 1) {
                 if (Math.random() < 0.5) {
-                    russianWordsNumber++
+                    russianWordsCount++
                 } else {
-                    englishWordsNumber++
+                    englishWordsCount++
                 }
             }
         }
         else if (wordsMode == RandomWordsMode.ENGLISH) {
-            englishWordsNumber = numberOfRandomWords
+            englishWordsCount = numberOfRandomWords
         } else if (wordsMode == RandomWordsMode.RUSSIAN) {
-            russianWordsNumber = numberOfRandomWords
+            russianWordsCount = numberOfRandomWords
         }
-        println("$russianWordsNumber $englishWordsNumber")
-        val result = vocabularyDao.getWordsForQuiz(russianWordsNumber, englishWordsNumber)
-        result.forEach { (k, v) -> println("$k   $v")}
-        return result
+        println("$russianWordsCount $englishWordsCount")
     }
 }
