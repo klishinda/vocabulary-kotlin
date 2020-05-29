@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class QuizUserService(private val quizService: QuizService, private var scanner: Scanner = Scanner(System.`in`)) {
+class QuizUserService(private val quizService: QuizService) {
     fun quiz(numberOfRandomWords : Int, wordsMode : RandomWordsMode) : Map<Question, List<Answer>> {
         val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
         println("Let's start! Write translation to the next words." + quizMap.size)
 
+        val scanner = Scanner(System.`in`)
         var resultForPrint: String
         var countCorrectAnswers = 0
         var countAllWords = 0
