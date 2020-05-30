@@ -10,7 +10,7 @@ class QuestionnaireMapper : RowMapper<Map<Question, List<Answer>>> {
     override fun mapRow(rs: ResultSet, rownum: Int): Map<Question, List<Answer>> {
         val quizMap = mutableMapOf<Question, MutableList<Answer>>()
 
-        while (rs.next()) {
+        do {
             val question = KotlinRowMapper(Question::class).mapRow(rs, rownum)
             val answer = KotlinRowMapper(Answer::class).mapRow(rs, rownum)
 
@@ -20,7 +20,7 @@ class QuestionnaireMapper : RowMapper<Map<Question, List<Answer>>> {
             else {
                 quizMap[question]!!.add(answer)
             }
-        }
+        } while(rs.next())
         return quizMap
     }
 }

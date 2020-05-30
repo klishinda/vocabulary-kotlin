@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class RussianWordsDao(private val jdbc: JdbcDao) {
     fun getRussianWord(word: String?): Word? {
         val sqlParams = MapSqlParameterSource(mapOf("word" to word?.toUpperCase()))
-        return jdbc.namedQuerySingle(GET_RUSSIAN_WORD_ID, sqlParams)
+        return jdbc.namedQuerySingle(GET_RUSSIAN_WORD, sqlParams)
     }
 
     fun addRussianWord(word: Word) : Int {
@@ -25,6 +25,6 @@ class RussianWordsDao(private val jdbc: JdbcDao) {
 
     private companion object {
         const val ADD_RUSSIAN_WORD = "insert into public.russian_words(word, description, part_of_speech) values (:word, :description, :partOfSpeech)"
-        const val GET_RUSSIAN_WORD_ID = "select r.id, r.word, r.description, r.part_of_speech from russian_words r where r.word = :word"
+        const val GET_RUSSIAN_WORD = "select r.id, r.word, r.description, r.part_of_speech from russian_words r where r.word = :word"
     }
 }
