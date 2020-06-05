@@ -1,16 +1,17 @@
 package gq.learningEnglish.controller
 
 import gq.learningEnglish.model.RandomWordsMode
-import gq.learningEnglish.service.QuizService
 import gq.learningEnglish.service.QuizUserService
-import org.springframework.context.annotation.Bean
-import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
-@Controller
-class QuizController(private val questionnaire: QuizService, private val userQuestionnaire: QuizUserService) {
-    @Bean
+@RestController
+@RequestMapping("/quiz")
+class QuizController(private val userQuestionnaire: QuizUserService) {
+
+    @PostMapping("/start")
     fun startQuiz() {
-        //questionnaire.getRandomWords(5, RandomWordsMode.ABSOLUTE_RANDOM)
         userQuestionnaire.quiz(5, RandomWordsMode.ABSOLUTE_RANDOM)
     }
 }

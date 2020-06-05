@@ -2,6 +2,7 @@ package gq.learningEnglish.service
 
 import gq.learningEnglish.dao.VocabularyDao
 import gq.learningEnglish.model.RandomWordsMode
+import gq.learningEnglish.model.RandomWordsMode.*
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
 import org.springframework.stereotype.Service
@@ -20,7 +21,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
     }
 
     private fun getWordCount(numberOfRandomWords: Int, wordsMode: RandomWordsMode) {
-        if (wordsMode == RandomWordsMode.ABSOLUTE_RANDOM) {
+        if (wordsMode == ABSOLUTE_RANDOM) {
             russianWordsCount = floor(numberOfRandomWords / 2.toDouble()).toInt()
             englishWordsCount = floor(numberOfRandomWords / 2.toDouble()).toInt()
             if ((numberOfRandomWords % 2) == 1) {
@@ -31,9 +32,9 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
                 }
             }
         }
-        else if (wordsMode == RandomWordsMode.ENGLISH) {
+        else if (wordsMode == ENGLISH) {
             englishWordsCount = numberOfRandomWords
-        } else if (wordsMode == RandomWordsMode.RUSSIAN) {
+        } else if (wordsMode == RUSSIAN) {
             russianWordsCount = numberOfRandomWords
         }
         println("$russianWordsCount $englishWordsCount")
