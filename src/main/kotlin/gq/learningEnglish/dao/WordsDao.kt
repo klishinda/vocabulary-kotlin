@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service
 @Service
 class WordsDao(private val jdbc: JdbcDao) {
 
-    fun getWord(id: Long): Word {
-        return jdbc.query(GET_WORD, id)
-    }
+    fun getWord(id: Long): Word = jdbc.query(GET_WORD, id)
 
     fun addWord(word: Word) : Long {
         word.run {
