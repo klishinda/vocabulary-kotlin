@@ -1,8 +1,12 @@
 package gq.learningEnglish.model
 
+import gq.learningEnglish.common.DbField
+
 data class Word(
-    var id: Long? = null,
+    val id: Long? = null,
+    @DbField("word")
     val name: String,
-    var description: String? = null,
+    val language: String,
+    val description: String? = null,
     val partOfSpeech: Int
 )

@@ -23,7 +23,7 @@ class VocabularyDao(private var jdbc: JdbcDao) {
     }
 
     object Sql {
-        const val ADD_VOCABULARY_PAIR = "insert into vocabulary(user_id, russian_id, english_id) values (:userId, :rusId, :engId)"
+        const val ADD_VOCABULARY_PAIR = "insert into vocabulary(user_id, first_word_id, second_word_id) values (:userId, :rusId, :engId)"
         const val GET_RANDOM_WORDS = "select e.id as asking_word_id, e.word as asking_word, e.description, v.id as vocabulary_id, r.id as answer_word_id, r.word as answer_word, 'ENGLISH' as asking_language\n" +
                                         "from (select * from english_words ee where exists (select 1 from vocabulary vv where vv.english_id = ee.id) order by random() limit :numberOfEnglishWords) e\n" +
                                         "join public.vocabulary v on v.english_id = e.id\n" +

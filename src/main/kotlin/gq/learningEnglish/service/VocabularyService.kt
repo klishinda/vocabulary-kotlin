@@ -3,6 +3,7 @@ package gq.learningEnglish.service
 import gq.learningEnglish.dao.EnglishWordsDao
 import gq.learningEnglish.dao.RussianWordsDao
 import gq.learningEnglish.dao.VocabularyDao
+import gq.learningEnglish.dao.WordsDao
 import gq.learningEnglish.model.Word
 import org.springframework.stereotype.Service
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service
 class VocabularyService(
     private val russianWordsDao: RussianWordsDao,
     private val englishWordsDao: EnglishWordsDao,
+    private val wordsDao: WordsDao,
     private val vocabularyDao: VocabularyDao
 ) {
     fun addRussianWord(newWord: Word) : Int {
@@ -20,22 +22,14 @@ class VocabularyService(
         return englishWordsDao.addEnglishWord(newWord)
     }
 
-    fun addWordPair(newRussianWord: Word, newEnglishWord: Word, userId: Int) : Int {
-        russianWordsDao.getRussianWord(newRussianWord.name).run{
-            if (this == null) {
-                newRussianWord.id = russianWordsDao.addRussianWord(newRussianWord).toLong()
-            } else {
-                newRussianWord.id = id
-            }
-        }
-        englishWordsDao.getEnglishWord(newEnglishWord.name).run{
-            if (this == null) {
-                newEnglishWord.id = englishWordsDao.addEnglishWord(newEnglishWord).toLong()
-            } else {
-                newEnglishWord.id = id
-            }
-        }
-        println("rusId: "+newRussianWord.id+", engId: "+newEnglishWord.id)
-        return vocabularyDao.addVocabularyRecord(newRussianWord, newEnglishWord, userId);
+    fun addWord(newWord: Word) : Long {
+        return wordsDao.addWord(newWord)
+    }
+
+    fun addWordPair(firstWordId: Long, secondWordId: Long, userId: Int) : Int {
+        val firstWord = wordsDao.getWord(firstWordId)
+        val secondWord = wordsDao.getWord(secondWordId)
+        println("$firstWord $secondWord")
+        return vocabularyDao.addVocabularyRecord(firstWord, secondWord, userId);
     }
 }
