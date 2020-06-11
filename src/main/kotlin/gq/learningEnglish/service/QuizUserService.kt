@@ -8,7 +8,7 @@ import java.util.*
 
 @Service
 class QuizUserService(private val quizService: QuizService) {
-    fun quiz(numberOfRandomWords : Int, wordsMode : RandomWordsMode) : Map<Question, List<Answer>> {
+    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
         val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
         println("Let's start! Write translation to the next words." + quizMap.size)
 
@@ -25,7 +25,8 @@ class QuizUserService(private val quizService: QuizService) {
                 println("Your answer: ")
                 val userAnswer = scanner.nextLine().toUpperCase()
                 if (v.stream().anyMatch { s: Answer -> s.answerWord.equals(userAnswer) && !s.result }) {
-                    v.stream().filter { s: Answer -> s.answerWord.equals(userAnswer) }.forEach { a: Answer -> a.result = true }
+                    v.stream().filter { s: Answer -> s.answerWord.equals(userAnswer) }
+                        .forEach { a: Answer -> a.result = true }
                     resultForPrint = "CORRECT!"
                     countCorrectAnswers++
                 } else {

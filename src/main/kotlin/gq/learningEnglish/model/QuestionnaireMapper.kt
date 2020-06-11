@@ -14,13 +14,12 @@ class QuestionnaireMapper : RowMapper<Map<Question, List<Answer>>> {
             val question = KotlinRowMapper(Question::class).mapRow(rs, rownum)
             val answer = KotlinRowMapper(Answer::class).mapRow(rs, rownum)
 
-            if ( quizMap[question] == null ) {
+            if (quizMap[question] == null) {
                 quizMap[question] = mutableListOf(answer)
-            }
-            else {
+            } else {
                 quizMap[question]!!.add(answer)
             }
-        } while(rs.next())
+        } while (rs.next())
         return quizMap
     }
 }

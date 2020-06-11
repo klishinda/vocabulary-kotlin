@@ -16,7 +16,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
     fun getRandomWords(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
         getWordCount(numberOfRandomWords, wordsMode)
         val result = vocabularyDao.getWordsForQuiz(russianWordsCount, englishWordsCount)
-        result.forEach { (k, v) -> println("$k   $v")}
+        result.forEach { (k, v) -> println("$k   $v") }
         return result
     }
 
@@ -31,8 +31,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
                     englishWordsCount++
                 }
             }
-        }
-        else if (wordsMode == ENGLISH) {
+        } else if (wordsMode == ENGLISH) {
             englishWordsCount = numberOfRandomWords
         } else if (wordsMode == RUSSIAN) {
             russianWordsCount = numberOfRandomWords

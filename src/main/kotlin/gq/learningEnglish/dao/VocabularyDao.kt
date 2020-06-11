@@ -11,17 +11,24 @@ import org.springframework.stereotype.Service
 @Service
 class VocabularyDao(private var jdbc: JdbcDao) {
     fun addVocabularyRecord(russianWord: Word, englishWord: Word, userId: Long): Long {
-        val sqlParams = MapSqlParameterSource(mapOf("userId" to userId, "rusId" to russianWord.id, "engId" to englishWord.id))
+        val sqlParams =
+            MapSqlParameterSource(mapOf("userId" to userId, "rusId" to russianWord.id, "engId" to englishWord.id))
         return jdbc.namedQuery(ADD_VOCABULARY_PAIR, sqlParams)
     }
 
     fun getWordsForQuiz(russianWordsNumber: Int, englishWordsNumber: Int): Map<Question, List<Answer>> {
-        val sqlParams = MapSqlParameterSource(mapOf("numberOfRussianWords" to russianWordsNumber, "numberOfEnglishWords" to englishWordsNumber))
+        val sqlParams = MapSqlParameterSource(
+            mapOf(
+                "numberOfRussianWords" to russianWordsNumber,
+                "numberOfEnglishWords" to englishWordsNumber
+            )
+        )
         return jdbc.namedQuery(GET_RANDOM_WORDS, QuestionnaireMapper(), sqlParams)
     }
 }
 
-private const val ADD_VOCABULARY_PAIR = "insert into vocabulary(user_id, first_word_id, second_word_id) values (:userId, :rusId, :engId) returning id"
+private const val ADD_VOCABULARY_PAIR =
+    "insert into vocabulary(user_id, first_word_id, second_word_id) values (:userId, :rusId, :engId) returning id"
 private const val GET_RANDOM_WORDS = "with wrd as (\n" +
         "    (select w.* from words w where w.language = 'ENGLISH' and exists (select 1 from vocabulary vv where vv.first_word_id = w.id or vv.second_word_id = w.id) order by random() limit :numberOfEnglishWords)\n" +
         "    union all\n" +

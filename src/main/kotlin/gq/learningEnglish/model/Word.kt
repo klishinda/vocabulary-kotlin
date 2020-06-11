@@ -1,7 +1,7 @@
 package gq.learningEnglish.model
 
-import gq.learningEnglish.common.DbEntity
-import gq.learningEnglish.common.DbField
+import gq.learningEnglish.common.interfaces.DbEntity
+import gq.learningEnglish.common.annotations.DbField
 
 data class Word(
     @DbField("id")

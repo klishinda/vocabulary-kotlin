@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/vocabulary")
-class VocabularyController (private val vocabularyService : VocabularyService) {
+class VocabularyController(private val vocabularyService: VocabularyService) {
 
     @PostMapping("/start")
     fun start() {
@@ -24,5 +24,6 @@ class VocabularyController (private val vocabularyService : VocabularyService) {
         @RequestParam name: String,
         @RequestParam language: String,
         @RequestParam partOfSpeech: Int
-    ) = vocabularyService.addWord(Word(name = name, language = language, partOfSpeech = partOfSpeech)).also { println(it) }
+    ) = vocabularyService.addWord(Word(name = name, language = language, partOfSpeech = partOfSpeech))
+        .also { println(it) }
 }
