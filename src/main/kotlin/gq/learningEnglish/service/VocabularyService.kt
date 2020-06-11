@@ -13,9 +13,9 @@ class VocabularyService(
 
     fun addWord(newWord: Word): Long = wordsDao.addWord(newWord)
 
-    fun addWordPair(firstWordId: Long, secondWordId: Long, userId: Int): Int {
+    fun addWordPair(firstWordId: Long, secondWordId: Long, userId: Long): Long {
         val firstWord = wordsDao.getWord(firstWordId)
         val secondWord = wordsDao.getWord(secondWordId)
-        return vocabularyDao.addVocabularyRecord(firstWord, secondWord, userId);
+        return vocabularyDao.addVocabularyRecord(firstWord, secondWord, userId)
     }
 }

@@ -11,16 +11,7 @@ class WordsDao(private val jdbc: JdbcDao) {
 
     fun getWord(id: Long): Word = jdbc.query(GET_WORD, id)
 
-    fun addWord(word: Word) : Long {
-        word.run {
-            val sqlParams = MapSqlParameterSource(mapOf(
-                "word" to name.toUpperCase(),
-                "language" to language,
-                "description" to description,
-                "partOfSpeech" to partOfSpeech))
-            return jdbc.namedUpdate(ADD_WORD, sqlParams).toLong()
-        }
-    }
+    fun addWord(word: Word) : Long = jdbc.namedUpdate(ADD_WORD, word.sqlParams).toLong()
 }
 
 private const val ADD_WORD = "insert into words(id, word, language, description, part_of_speech) values (default, :word, :language, :description, :partOfSpeech)"

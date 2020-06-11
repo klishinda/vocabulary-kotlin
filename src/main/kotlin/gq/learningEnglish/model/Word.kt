@@ -1,5 +1,6 @@
 package gq.learningEnglish.model
 
+import gq.learningEnglish.common.DbEntity
 import gq.learningEnglish.common.DbField
 
 data class Word(
@@ -13,4 +14,4 @@ data class Word(
     val description: String? = null,
     @DbField("partOfSpeech")
     val partOfSpeech: Int
-)
+) : DbEntity

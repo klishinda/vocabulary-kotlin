@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class VocabularyDao(private var jdbc: JdbcDao) {
-    fun addVocabularyRecord(russianWord: Word, englishWord: Word, userId: Int): Int {
+    fun addVocabularyRecord(russianWord: Word, englishWord: Word, userId: Long): Long {
         val sqlParams = MapSqlParameterSource(mapOf("userId" to userId, "rusId" to russianWord.id, "engId" to englishWord.id))
-        return jdbc.namedUpdate(ADD_VOCABULARY_PAIR, sqlParams)
+        return jdbc.namedUpdate(ADD_VOCABULARY_PAIR, sqlParams).toLong()
     }
 
     fun getWordsForQuiz(russianWordsNumber: Int, englishWordsNumber: Int): Map<Question, List<Answer>> {

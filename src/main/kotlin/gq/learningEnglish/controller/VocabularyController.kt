@@ -15,7 +15,7 @@ class VocabularyController (private val vocabularyService : VocabularyService) {
         val engWord = Word(name = "SNOW", language = "ENGLISH", partOfSpeech = 101)
         val addedIdRus: Long = vocabularyService.addWord(rusWord)
         val addedIdEng: Long = vocabularyService.addWord(engWord)
-        val addedVocabularyId: Int = vocabularyService.addWordPair(addedIdRus, addedIdEng, 101)
+        val addedVocabularyId: Long = vocabularyService.addWordPair(addedIdRus, addedIdEng, 101)
         println("$addedVocabularyId $addedIdRus $addedIdEng")
     }
 
