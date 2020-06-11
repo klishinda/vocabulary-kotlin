@@ -11,29 +11,18 @@ class VocabularyController (private val vocabularyService : VocabularyService) {
     @PostMapping("/start")
     fun start() {
         println("Start")
-        val rusWord = Word(name = "БЕЛЫЙ2", partOfSpeech = 102)
-        val engWord = Word(name = "WHITE2", partOfSpeech = 101)
-        val addedIdRus: Int = vocabularyService.addRussianWord(rusWord)
-        val addedIdEng: Int = vocabularyService.addEnglishWord(engWord)
-        val addedVocabularyId: Int = vocabularyService.addWordPair(rusWord, engWord, 101)
+        val rusWord = Word(name = "СНЕГ", language = "RUSSIAN", partOfSpeech = 101)
+        val engWord = Word(name = "SNOW", language = "ENGLISH", partOfSpeech = 101)
+        val addedIdRus: Long = vocabularyService.addWord(rusWord)
+        val addedIdEng: Long = vocabularyService.addWord(engWord)
+        val addedVocabularyId: Long = vocabularyService.addWordPair(addedIdRus, addedIdEng, 101)
         println("$addedVocabularyId $addedIdRus $addedIdEng")
     }
 
-    @PostMapping("/add-russian-word")
+    @PostMapping("/add-word")
     fun addRussianWord(
         @RequestParam name: String,
+        @RequestParam language: String,
         @RequestParam partOfSpeech: Int
-    ) {
-        val word = Word(name = name, partOfSpeech = partOfSpeech)
-        vocabularyService.addRussianWord(word).also { println(it) }
-    }
-
-    @PostMapping("/add-english-word")
-    fun addEnglishWord(
-        @RequestParam name: String,
-        @RequestParam partOfSpeech: Int
-    ) {
-        val word = Word(name = name, partOfSpeech = partOfSpeech)
-        vocabularyService.addEnglishWord(word).also { println(it) }
-    }
+    ) = vocabularyService.addWord(Word(name = name, language = language, partOfSpeech = partOfSpeech)).also { println(it) }
 }
