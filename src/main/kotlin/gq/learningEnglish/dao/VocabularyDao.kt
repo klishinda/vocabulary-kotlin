@@ -10,9 +10,16 @@ import org.springframework.stereotype.Service
 
 @Service
 class VocabularyDao(private var jdbc: JdbcDao) {
-    fun addVocabularyRecord(russianWord: Word, englishWord: Word, userId: Long): Long {
+
+    fun addVocabularyRecord(firstWord: Word, secondWord: Word, userId: Long): Long {
         val sqlParams =
-            MapSqlParameterSource(mapOf("userId" to userId, "rusId" to russianWord.id, "engId" to englishWord.id))
+            MapSqlParameterSource(
+                mapOf(
+                    "userId" to userId,
+                    "firstId" to firstWord.id,
+                    "secondId" to secondWord.id
+                )
+            )
         return jdbc.namedQuery(ADD_VOCABULARY_PAIR, sqlParams)
     }
 
@@ -28,16 +35,23 @@ class VocabularyDao(private var jdbc: JdbcDao) {
 }
 
 private const val ADD_VOCABULARY_PAIR =
-    "insert into vocabulary(user_id, first_word_id, second_word_id) values (:userId, :rusId, :engId) returning id"
-private const val GET_RANDOM_WORDS = "with wrd as (\n" +
-        "    (select w.* from words w where w.language = 'ENGLISH' and exists (select 1 from vocabulary vv where vv.first_word_id = w.id or vv.second_word_id = w.id) order by random() limit :numberOfEnglishWords)\n" +
-        "    union all\n" +
-        "    (select w.* from words w where w.language = 'RUSSIAN' and exists (select 1 from vocabulary vv where vv.first_word_id = w.id or vv.second_word_id = w.id) order by random() limit :numberOfRussianWords)\n" +
-        ")\n" +
-        "select wrd.id as asking_word_id, wrd.word as asking_word, wrd.description, v.id as vocabulary_id, translate.id as answer_word_id, translate.word as answer_word, wrd.language as asking_language from wrd\n" +
-        "join public.vocabulary v on v.first_word_id = wrd.id\n" +
-        "join public.words translate on translate.id = v.second_word_id\n" +
-        "union all\n" +
-        "select wrd.id as asking_word_id, wrd.word as asking_word, wrd.description, v.id as vocabulary_id, translate.id as answer_word_id, translate.word as answer_word, wrd.language as asking_language from wrd\n" +
-        "join public.vocabulary v on v.second_word_id = wrd.id\n" +
-        "join public.words translate on translate.id = v.first_word_id"
+    "insert into vocabulary(user_id, first_word_id, second_word_id) values (:userId, :firstId, :secondId) returning id"
+private const val GET_RANDOM_WORDS =
+    """with wrd as (
+        (select w.* from words w where w.language = 'ENGLISH' and exists (
+            select 1 from vocabulary vv where vv.first_word_id = w.id or vv.second_word_id = w.id)
+        order by random() limit :numberOfEnglishWords)
+        union all
+        (select w.* from words w where w.language = 'RUSSIAN' and exists (
+            select 1 from vocabulary vv where vv.first_word_id = w.id or vv.second_word_id = w.id)
+        order by random() limit :numberOfRussianWords)
+    )
+    select wrd.id as asking_word_id, wrd.word as asking_word, wrd.description, v.id as vocabulary_id,
+    translate.id as answer_word_id, translate.word as answer_word, wrd.language as asking_language from wrd
+    join public.vocabulary v on v.first_word_id = wrd.id
+    join public.words translate on translate.id = v.second_word_id
+    union all
+    select wrd.id as asking_word_id, wrd.word as asking_word, wrd.description, v.id as vocabulary_id,
+    translate.id as answer_word_id, translate.word as answer_word, wrd.language as asking_language from wrd
+    join public.vocabulary v on v.second_word_id = wrd.id
+    join public.words translate on translate.id = v.first_word_id"""
