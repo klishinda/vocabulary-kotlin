@@ -10,32 +10,32 @@ import kotlin.math.floor
 
 @Service
 class QuizService(private val vocabularyDao: VocabularyDao) {
-    var russianWordsCount = 0
-    var englishWordsCount = 0
 
     fun getRandomWords(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
-        getWordCount(numberOfRandomWords, wordsMode)
-        val result = vocabularyDao.getWordsForQuiz(russianWordsCount, englishWordsCount)
+        val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfRandomWords, wordsMode)
+        val result = vocabularyDao.getWordsForQuiz(firstLanguageCount, secondLanguageCount)
         result.forEach { (k, v) -> println("$k   $v") }
         return result
     }
 
-    private fun getWordCount(numberOfRandomWords: Int, wordsMode: RandomWordsMode) {
-        if (wordsMode == ABSOLUTE_RANDOM) {
-            russianWordsCount = floor(numberOfRandomWords / 2.toDouble()).toInt()
-            englishWordsCount = floor(numberOfRandomWords / 2.toDouble()).toInt()
-            if ((numberOfRandomWords % 2) == 1) {
-                if (Math.random() < 0.5) {
-                    russianWordsCount++
-                } else {
-                    englishWordsCount++
+    private fun getWordCount(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Pair<Int, Int> {
+        return when(wordsMode) {
+            ENGLISH -> 0 to numberOfRandomWords
+            RUSSIAN -> numberOfRandomWords to 0
+            ABSOLUTE_RANDOM -> getNumberForRandom(numberOfRandomWords)
+        }
+    }
+
+    private fun getNumberForRandom(numberOfRandomWords: Int): Pair<Int, Int> {
+        val averageNumber = floor(numberOfRandomWords / 2.toDouble()).toInt()
+        return when((numberOfRandomWords % 2) == 1) {
+            true -> averageNumber to averageNumber
+            false -> {
+                when(Math.random() < 0.5) {
+                    true -> averageNumber to averageNumber + 1
+                    false -> averageNumber + 1 to averageNumber
                 }
             }
-        } else if (wordsMode == ENGLISH) {
-            englishWordsCount = numberOfRandomWords
-        } else if (wordsMode == RUSSIAN) {
-            russianWordsCount = numberOfRandomWords
         }
-        println("$russianWordsCount $englishWordsCount")
     }
 }
