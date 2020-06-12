@@ -1,4 +1,6 @@
-package gq.learningEnglish.common
+package gq.learningEnglish.common.annotations
+
+import gq.learningEnglish.common.SerializationType
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)

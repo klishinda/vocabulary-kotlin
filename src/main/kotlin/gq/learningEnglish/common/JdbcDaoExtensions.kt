@@ -22,12 +22,12 @@ inline fun <reified T : Any> JdbcDao.namedQuery(sql: String, paramSource: SqlPar
 
 inline fun <reified T : Any> JdbcDao.namedQuerySingle(sql: String, paramSource: SqlParameterSource): T? {
     return queryExecFun<T, T?>({ namedQuerySingle(sql, SingleColumnRowMapper(T::class.java), paramSource) },
-            { namedQuerySingle(sql, it, paramSource) })
+        { namedQuerySingle(sql, it, paramSource) })
 }
 
 inline fun <reified T : Any> JdbcDao.namedQueryList(sql: String, paramSource: SqlParameterSource): List<T> {
     return queryExecFun<T, List<T>>({ namedQueryList(sql, SingleColumnRowMapper(T::class.java), paramSource) },
-            { namedQueryList(sql, it, paramSource) })
+        { namedQueryList(sql, it, paramSource) })
 }
 
 fun <T : Any> isMappable(kClass: KClass<T>): Boolean {
@@ -35,8 +35,8 @@ fun <T : Any> isMappable(kClass: KClass<T>): Boolean {
 }
 
 inline fun <reified T : Any, R> JdbcDao.queryExecFun(
-        mappableFun: JdbcDao.(KClass<T>) -> R,
-        rowMapperFun: JdbcDao.(KotlinRowMapper<T>) -> R
+    mappableFun: JdbcDao.(KClass<T>) -> R,
+    rowMapperFun: JdbcDao.(KotlinRowMapper<T>) -> R
 ): R {
     T::class.let {
         return if (isMappable(it)) {

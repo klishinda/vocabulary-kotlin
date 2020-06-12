@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import gq.learningEnglish.common.annotations.DbField
+import gq.learningEnglish.common.interfaces.Logger
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.support.JdbcUtils
 import java.sql.ResultSet
@@ -13,8 +15,8 @@ import kotlin.reflect.full.*
 import kotlin.reflect.jvm.javaType
 
 class KotlinRowMapper<T : Any>(
-        private val mappedClass: KClass<T>,
-        private val jsonMapper: ObjectMapper = jacksonObjectMapper()
+    private val mappedClass: KClass<T>,
+    private val jsonMapper: ObjectMapper = jacksonObjectMapper()
 ) : RowMapper<T>, Logger {
 
     private val dbFields = HashMap<String, Int>()
@@ -36,8 +38,8 @@ class KotlinRowMapper<T : Any>(
     private fun mapConstructorFields(rs: ResultSet, parameter: KParameter) {
         if (!parameter.type.isMarkedNullable) {
             log.debug(
-                    "Warning, field ${parameter.name} of ${mappedClass.simpleName} " +
-                            "is not nullable, that may cause IllegalArgumentException!"
+                "Warning, field ${parameter.name} of ${mappedClass.simpleName} " +
+                        "is not nullable, that may cause IllegalArgumentException!"
             )
         }
         val index = getDbFieldIndex(parameter.name!!)
@@ -53,12 +55,12 @@ class KotlinRowMapper<T : Any>(
 
     private fun setMutableProperties(rs: ResultSet, instance: T) {
         instance::class.memberProperties
-                .filter { it.visibility == KVisibility.PUBLIC }
-                .filterIsInstance<KMutableProperty<*>>()
-                .forEach {
-                    val index = getDbFieldIndex(it.name)
-                    it.setter.call(instance, rs.getValue(index, it))
-                }
+            .filter { it.visibility == KVisibility.PUBLIC }
+            .filterIsInstance<KMutableProperty<*>>()
+            .forEach {
+                val index = getDbFieldIndex(it.name)
+                it.setter.call(instance, rs.getValue(index, it))
+            }
     }
 
     private fun processDbFields(rs: ResultSet) {
@@ -155,21 +157,21 @@ class KotlinRowMapper<T : Any>(
             val javaType = parameter.clazz.run {
                 when {
                     isSubclassOf(Map::class) -> factory.constructMapType(
-                            HashMap::class.java,
-                            toJavaTypeRecursively(typeArguments[0], factory),
-                            toJavaTypeRecursively(typeArguments[1], factory)
+                        HashMap::class.java,
+                        toJavaTypeRecursively(typeArguments[0], factory),
+                        toJavaTypeRecursively(typeArguments[1], factory)
                     )
                     isSubclassOf(List::class) -> factory.constructCollectionType(
-                            ArrayList::class.java,
-                            toJavaTypeRecursively(typeArguments.first(), factory)
+                        ArrayList::class.java,
+                        toJavaTypeRecursively(typeArguments.first(), factory)
                     )
                     isSubclassOf(Set::class) -> factory.constructCollectionType(
-                            HashSet::class.java,
-                            toJavaTypeRecursively(typeArguments.first(), factory)
+                        HashSet::class.java,
+                        toJavaTypeRecursively(typeArguments.first(), factory)
                     )
                     else -> factory.constructParametricType(
-                            this::class.java,
-                            *typeArguments.map { toJavaTypeRecursively(it, factory) }.toTypedArray()
+                        this::class.java,
+                        *typeArguments.map { toJavaTypeRecursively(it, factory) }.toTypedArray()
                     )
                 }
             }
@@ -184,21 +186,21 @@ class KotlinRowMapper<T : Any>(
                 return when {
                     this.arguments.isEmpty() -> factory.constructType(toJavaClass(projection))
                     this.isSubtypeOf(MAP_TYPE) -> factory.constructMapType(
-                            HashMap::class.java,
-                            toJavaTypeRecursively(this.arguments[0], factory),
-                            toJavaTypeRecursively(this.arguments[1], factory)
+                        HashMap::class.java,
+                        toJavaTypeRecursively(this.arguments[0], factory),
+                        toJavaTypeRecursively(this.arguments[1], factory)
                     )
                     this.isSubtypeOf(LIST_TYPE) -> factory.constructCollectionType(
-                            ArrayList::class.java,
-                            toJavaTypeRecursively(this.arguments.first(), factory)
+                        ArrayList::class.java,
+                        toJavaTypeRecursively(this.arguments.first(), factory)
                     )
                     this.isSubtypeOf(SET_TYPE) -> factory.constructCollectionType(
-                            HashSet::class.java,
-                            toJavaTypeRecursively(this.arguments.first(), factory)
+                        HashSet::class.java,
+                        toJavaTypeRecursively(this.arguments.first(), factory)
                     )
                     else -> factory.constructParametricType(
-                            toJavaClass(projection),
-                            *arguments.map { toJavaTypeRecursively(it, factory) }.toTypedArray()
+                        toJavaClass(projection),
+                        *arguments.map { toJavaTypeRecursively(it, factory) }.toTypedArray()
                     )
                 }
             }

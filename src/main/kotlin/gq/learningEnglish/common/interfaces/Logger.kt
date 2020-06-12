@@ -1,4 +1,4 @@
-package gq.learningEnglish.common
+package gq.learningEnglish.common.interfaces
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
