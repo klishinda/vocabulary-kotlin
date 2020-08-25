@@ -1,7 +1,6 @@
 package gq.learningEnglish.controller
 
-import gq.learningEnglish.model.AvailableLanguages
-import gq.learningEnglish.model.AvailableLanguages.*
+import gq.learningEnglish.model.enums.AvailableLanguages.*
 import gq.learningEnglish.model.Word
 import gq.learningEnglish.service.VocabularyService
 import org.springframework.web.bind.annotation.*
@@ -22,10 +21,5 @@ class VocabularyController(private val vocabularyService: VocabularyService) {
     }
 
     @PostMapping("/add-word")
-    fun addRussianWord(
-        @RequestParam name: String,
-        @RequestParam language: AvailableLanguages,
-        @RequestParam partOfSpeech: Int
-    ) = vocabularyService.addWord(Word(name = name, language = language, partOfSpeech = partOfSpeech))
-        .also { println(it) }
+    fun addRussianWord(@RequestBody word: Word) = vocabularyService.addWord(word).also { println(it) }
 }

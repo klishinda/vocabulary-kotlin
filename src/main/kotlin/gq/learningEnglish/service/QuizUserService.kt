@@ -1,6 +1,6 @@
 package gq.learningEnglish.service
 
-import gq.learningEnglish.model.RandomWordsMode
+import gq.learningEnglish.model.enums.RandomWordsMode
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
 import org.springframework.stereotype.Service
@@ -8,6 +8,7 @@ import java.util.*
 
 @Service
 class QuizUserService(private val quizService: QuizService) {
+
     fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
         val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
         println("Let's start! Write translation to the next words." + quizMap.size)

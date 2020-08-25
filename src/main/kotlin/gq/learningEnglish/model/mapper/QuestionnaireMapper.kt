@@ -1,4 +1,4 @@
-package gq.learningEnglish.model
+package gq.learningEnglish.model.mapper
 
 import gq.learningEnglish.common.KotlinRowMapper
 import gq.learningEnglish.model.questionnaire.Answer
@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
 
 class QuestionnaireMapper : RowMapper<Map<Question, List<Answer>>> {
+
     override fun mapRow(rs: ResultSet, rownum: Int): Map<Question, List<Answer>> {
         val quizMap = mutableMapOf<Question, MutableList<Answer>>()
 

@@ -1,6 +1,6 @@
 package gq.learningEnglish.controller
 
-import gq.learningEnglish.model.RandomWordsMode
+import gq.learningEnglish.model.enums.RandomWordsMode
 import gq.learningEnglish.service.QuizUserService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
