@@ -14,6 +14,6 @@ data class Word(
     val language: AvailableLanguages,
     @DbField
     val description: String? = null,
-    @DbField
-    val partOfSpeech: Int
+    @DbField(value = "part_of_speech")
+    val partOfSpeech: Int? = null
 ) : DbEntity
