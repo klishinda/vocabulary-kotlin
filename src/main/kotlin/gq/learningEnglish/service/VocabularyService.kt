@@ -18,4 +18,6 @@ class VocabularyService(
         val secondWord = wordsDao.getWord(secondWordId)
         return vocabularyDao.addVocabularyRecord(firstWord, secondWord, userId)
     }
+
+    fun getTranslate(wordId: Long, userId: Long): List<Word>? = vocabularyDao.getTranslate(wordId, userId)
 }

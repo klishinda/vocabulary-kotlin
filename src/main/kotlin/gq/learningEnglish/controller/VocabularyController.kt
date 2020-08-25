@@ -26,6 +26,9 @@ class VocabularyController(private val vocabularyService: VocabularyService) {
     @PostMapping("/add-pair")
     fun addWordPair(@RequestParam firstId: Long, @RequestParam secondId: Long) =
         vocabularyService.addWordPair(firstId, secondId, USER_ID).also { println(it) }
+
+    @GetMapping("/translate")
+    fun getTranslate(@RequestParam wordId: Long) = vocabularyService.getTranslate(wordId, USER_ID).also { println(it) }
 }
 
 private const val USER_ID = 101L

@@ -30,8 +30,17 @@ class VocabularyDao(private var jdbc: JdbcDao) {
                 "numberOfEnglishWords" to englishWordsNumber
             )
         )
-        return jdbc.namedQuery(GET_RANDOM_WORDS,
-            QuestionnaireMapper(), sqlParams)
+        return jdbc.namedQuery(GET_RANDOM_WORDS, QuestionnaireMapper(), sqlParams)
+    }
+
+    fun getTranslate(wordId: Long, userId: Long): List<Word>? {
+        val sqlParams = MapSqlParameterSource(
+            mapOf(
+                "wordId" to wordId,
+                "userId" to userId
+            )
+        )
+        return jdbc.namedQueryList(GET_TRANSLATE, sqlParams)
     }
 }
 
@@ -56,3 +65,9 @@ private const val GET_RANDOM_WORDS =
     translate.id as answer_word_id, translate.word as answer_word, wrd.language as asking_language from wrd
     join public.vocabulary v on v.second_word_id = wrd.id
     join public.words translate on translate.id = v.first_word_id"""
+private const val GET_TRANSLATE =
+    """select * from words where id in (
+        select second_word_id from vocabulary where user_id = :userId and first_word_id = :wordId
+        union all
+        select first_word_id from vocabulary where user_id = :userId and second_word_id = :wordId
+    )"""
