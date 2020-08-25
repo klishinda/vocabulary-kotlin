@@ -29,6 +29,9 @@ class VocabularyController(private val vocabularyService: VocabularyService) {
 
     @GetMapping("/translate")
     fun getTranslate(@RequestParam wordId: Long) = vocabularyService.getTranslate(wordId, USER_ID).also { println(it) }
+
+    @GetMapping("/unused-words")
+    fun getUnusedWords() = vocabularyService.getUnusedWords().also { println(it) }
 }
 
 private const val USER_ID = 101L

@@ -20,4 +20,6 @@ class VocabularyService(
     }
 
     fun getTranslate(wordId: Long, userId: Long): List<Word>? = vocabularyDao.getTranslate(wordId, userId)
+
+    fun getUnusedWords(): List<Word>? = vocabularyDao.getUnusedWords()
 }

@@ -42,6 +42,8 @@ class VocabularyDao(private var jdbc: JdbcDao) {
         )
         return jdbc.namedQueryList(GET_TRANSLATE, sqlParams)
     }
+
+    fun getUnusedWords(): List<Word>? = jdbc.queryList(UNUSED_WORDS)
 }
 
 private const val ADD_VOCABULARY_PAIR =
@@ -70,4 +72,10 @@ private const val GET_TRANSLATE =
         select second_word_id from vocabulary where user_id = :userId and first_word_id = :wordId
         union all
         select first_word_id from vocabulary where user_id = :userId and second_word_id = :wordId
+    )"""
+private const val UNUSED_WORDS =
+    """select * from words where id not in (
+        select first_word_id from vocabulary
+        union
+        select second_word_id from vocabulary
     )"""
