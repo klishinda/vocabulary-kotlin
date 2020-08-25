@@ -1,7 +1,7 @@
 package gq.learningEnglish.dao
 
 import gq.learningEnglish.common.*
-import gq.learningEnglish.model.QuestionnaireMapper
+import gq.learningEnglish.model.mapper.QuestionnaireMapper
 import gq.learningEnglish.model.Word
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
@@ -30,7 +30,8 @@ class VocabularyDao(private var jdbc: JdbcDao) {
                 "numberOfEnglishWords" to englishWordsNumber
             )
         )
-        return jdbc.namedQuery(GET_RANDOM_WORDS, QuestionnaireMapper(), sqlParams)
+        return jdbc.namedQuery(GET_RANDOM_WORDS,
+            QuestionnaireMapper(), sqlParams)
     }
 }
 

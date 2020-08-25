@@ -1,8 +1,8 @@
 package gq.learningEnglish.service
 
 import gq.learningEnglish.dao.VocabularyDao
-import gq.learningEnglish.model.RandomWordsMode
-import gq.learningEnglish.model.RandomWordsMode.*
+import gq.learningEnglish.model.enums.RandomWordsMode
+import gq.learningEnglish.model.enums.RandomWordsMode.*
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
 import org.springframework.stereotype.Service

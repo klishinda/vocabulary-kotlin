@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class Config {
+
     @Bean
     @Autowired
     open fun postgreDao(postgreDataSource: HikariDataSource): JdbcDao = JdbcDao(postgreDataSource)
