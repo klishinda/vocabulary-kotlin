@@ -9,31 +9,51 @@ import java.util.*
 @Service
 class QuizUserService(private val quizService: QuizService) {
 
-    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
+    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode) {
         val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
         println("Let's start! Write translation to the next words (${quizMap.size} total)")
-        // set only correct answers. All empty fields "result" means wrong answer
         quizMap.forEach { (question, answers) ->
             println("${question.askingWord} ${question.description.orEmpty()}")
             processQuiz(answers)
         }
-        println(quizMap)
-
-        return quizMap
+        printResults(quizMap)
     }
 
     private fun processQuiz(answers: List<Answer>) {
         val scanner = Scanner(System.`in`)
+        val wrongAnswers: MutableList<String> = mutableListOf()
         for (answer in answers) {
             println("Your answer: ")
             val userAnswer = scanner.nextLine().toUpperCase()
-            if (answers.stream().anyMatch { s: Answer -> s.answerWord.equals(userAnswer) && !s.result }) {
-                answers.stream().filter { s: Answer -> s.answerWord.equals(userAnswer) }
-                    .forEach { a: Answer -> a.result = true }
+            if (answers.stream().anyMatch { s: Answer -> s.answerWord == userAnswer && !s.result }) {
+                answers.stream().filter { s: Answer -> s.answerWord == userAnswer }
+                    .forEach { a: Answer ->
+                        a.result = true
+                        a.userAnswer = userAnswer
+                    }
+            } else {
+                wrongAnswers.add(userAnswer)
             }
         }
-        for (answer in answers) {
-            println(answer.result)
+        for (wrongAnswer in wrongAnswers) {
+            answers.stream().filter { s: Answer -> s.userAnswer == null && !s.result }
+                .forEach { a: Answer -> a.userAnswer = wrongAnswer }
         }
     }
+
+    private fun printResults(quizMap: Map<Question, List<Answer>>) {
+        val results = quizMap.values.flatten()
+        println("Общая статистика по ответам:")
+        quizMap.forEach { (question, answers) ->
+            println("\nВопрос: ${question.askingWord} ${question.description.orEmpty()}")
+            for (answer in answers) {
+                println("Правильный ответ: ${answer.answerWord}")
+                println("Ваш ответ: ${answer.userAnswer}. ${resultMapping[answer.result]}")
+            }
+        }
+        println("Общее количество слов: ${results.size}")
+        println("Количество правильных ответов: ${results.filter { x -> x.result }.size}")
+    }
 }
+
+private val resultMapping = mapOf(true to "CORRECT", false to "WRONG")

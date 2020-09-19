@@ -10,5 +10,6 @@ data class Answer(
     @DbField(value = "answer_word")
     val answerWord: String?
 ) {
+    var userAnswer: String? = null
     var result: Boolean = false
 }
