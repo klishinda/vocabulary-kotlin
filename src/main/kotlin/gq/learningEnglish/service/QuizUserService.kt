@@ -1,5 +1,6 @@
 package gq.learningEnglish.service
 
+import gq.learningEnglish.dao.HistoryDao
 import gq.learningEnglish.model.enums.RandomWordsMode
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
@@ -7,7 +8,10 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class QuizUserService(private val quizService: QuizService) {
+class QuizUserService(
+    private val quizService: QuizService,
+    private val historyDao: HistoryDao
+) {
 
     fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode) {
         val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
@@ -16,7 +20,7 @@ class QuizUserService(private val quizService: QuizService) {
             println("${question.askingWord} ${question.description.orEmpty()}")
             processQuiz(answers)
         }
-        printResults(quizMap)
+        processResults(quizMap)
     }
 
     private fun processQuiz(answers: List<Answer>) {
@@ -41,7 +45,7 @@ class QuizUserService(private val quizService: QuizService) {
         }
     }
 
-    private fun printResults(quizMap: Map<Question, List<Answer>>) {
+    private fun processResults(quizMap: Map<Question, List<Answer>>) {
         val results = quizMap.values.flatten()
         println("Общая статистика по ответам:")
         quizMap.forEach { (question, answers) ->
@@ -49,6 +53,7 @@ class QuizUserService(private val quizService: QuizService) {
             for (answer in answers) {
                 println("Правильный ответ: ${answer.answerWord}")
                 println("Ваш ответ: ${answer.userAnswer}. ${resultMapping[answer.result]}")
+                historyDao.addHistory(answer.setAnswerHistoryMap(101L, question.askingWordId))
             }
         }
         println("\nОбщее количество слов: ${results.size}")

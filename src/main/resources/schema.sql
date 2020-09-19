@@ -59,9 +59,11 @@ create table history (
                        adding_time timestamp default current_timestamp not null,
                        user_id integer not null,
                        vocabulary_id integer not null,
-                       asking_language varchar(20) not null,
+                       asking_word integer not null,
+                       user_answer varchar(200),
                        result boolean not null
 );
-create index history_vocabulary ON history(user_id, vocabulary_id, asking_language);
+create index history_vocabulary ON history(user_id, vocabulary_id, asking_word);
 alter table history add constraint history_fkey1 FOREIGN KEY (user_id) REFERENCES users(id);
 alter table history add constraint history_fkey2 FOREIGN KEY (vocabulary_id) REFERENCES vocabulary(id);
+alter table history add constraint history_fkey3 FOREIGN KEY (asking_word) REFERENCES words(id);
