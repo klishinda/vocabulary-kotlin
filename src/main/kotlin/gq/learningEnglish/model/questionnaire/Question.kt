@@ -5,11 +5,11 @@ import gq.learningEnglish.model.enums.AvailableLanguages
 
 data class Question(
     @DbField(value = "asking_language")
-    var askingLanguage: AvailableLanguages,
+    val askingLanguage: AvailableLanguages,
     @DbField(value = "asking_word_id")
-    var askingWordId: Int,
+    val askingWordId: Int,
     @DbField(value = "asking_word")
-    var askingWord: String,
+    val askingWord: String,
     @DbField
-    var description: String?
+    val description: String?
 )

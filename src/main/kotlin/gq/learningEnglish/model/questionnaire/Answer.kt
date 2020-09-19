@@ -4,11 +4,11 @@ import gq.learningEnglish.common.annotations.DbField
 
 data class Answer(
     @DbField(value = "vocabulary_id")
-    var vocabularyId: Int,
+    val vocabularyId: Int,
     @DbField(value = "answer_word_id")
-    var answerWordId: Int,
+    val answerWordId: Int,
     @DbField(value = "answer_word")
-    var answerWord: String?
+    val answerWord: String?
 ) {
     var result: Boolean = false
 }

@@ -28,7 +28,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
 
     private fun getNumberForRandom(numberOfRandomWords: Int): Pair<Int, Int> {
         val averageNumber = floor(numberOfRandomWords / 2.toDouble()).toInt()
-        return when((numberOfRandomWords % 2) == 1) {
+        return when((numberOfRandomWords % 2) == 0) {
             true -> averageNumber to averageNumber
             false -> {
                 when(Math.random() < 0.5) {

@@ -11,34 +11,29 @@ class QuizUserService(private val quizService: QuizService) {
 
     fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
         val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
-        println("Let's start! Write translation to the next words." + quizMap.size)
-
-        val scanner = Scanner(System.`in`)
-        var resultForPrint: String
-        var countCorrectAnswers = 0
-        var countAllWords = 0
+        println("Let's start! Write translation to the next words (${quizMap.size} total)")
         // set only correct answers. All empty fields "result" means wrong answer
-        quizMap.forEach { (k, v) ->
-            val questionWord: Question = k
-            println(k.askingWord + " " + questionWord.description)
-            for (answer in v) {
-                countAllWords++
-                println("Your answer: ")
-                val userAnswer = scanner.nextLine().toUpperCase()
-                if (v.stream().anyMatch { s: Answer -> s.answerWord.equals(userAnswer) && !s.result }) {
-                    v.stream().filter { s: Answer -> s.answerWord.equals(userAnswer) }
-                        .forEach { a: Answer -> a.result = true }
-                    resultForPrint = "CORRECT!"
-                    countCorrectAnswers++
-                } else {
-                    resultForPrint = "INCORRECT!"
-                }
-                println("Your answer is $userAnswer. $resultForPrint")
-            }
+        quizMap.forEach { (question, answers) ->
+            println("${question.askingWord} ${question.description.orEmpty()}")
+            processQuiz(answers)
         }
-        println("----------RESULTS----------")
-        println("Correct answers: $countCorrectAnswers/$countAllWords")
+        println(quizMap)
 
         return quizMap
+    }
+
+    private fun processQuiz(answers: List<Answer>) {
+        val scanner = Scanner(System.`in`)
+        for (answer in answers) {
+            println("Your answer: ")
+            val userAnswer = scanner.nextLine().toUpperCase()
+            if (answers.stream().anyMatch { s: Answer -> s.answerWord.equals(userAnswer) && !s.result }) {
+                answers.stream().filter { s: Answer -> s.answerWord.equals(userAnswer) }
+                    .forEach { a: Answer -> a.result = true }
+            }
+        }
+        for (answer in answers) {
+            println(answer.result)
+        }
     }
 }

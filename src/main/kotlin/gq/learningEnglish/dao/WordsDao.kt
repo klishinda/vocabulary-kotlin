@@ -16,6 +16,6 @@ class WordsDao(private val jdbc: JdbcDao) {
 
 private const val ADD_WORD =
     """insert into words(id, word, language, description, part_of_speech)
-    values (default, :word, :language, :description, :partOfSpeech) returning id"""
+    values (default, :word, :language, :description, :part_of_speech) returning id"""
 private const val GET_WORD =
     "select w.id, w.word, w.language, w.description, w.part_of_speech from words w where w.id = ?"
