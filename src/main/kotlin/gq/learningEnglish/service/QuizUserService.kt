@@ -51,7 +51,7 @@ class QuizUserService(private val quizService: QuizService) {
                 println("Ваш ответ: ${answer.userAnswer}. ${resultMapping[answer.result]}")
             }
         }
-        println("Общее количество слов: ${results.size}")
+        println("\nОбщее количество слов: ${results.size}")
         println("Количество правильных ответов: ${results.filter { x -> x.result }.size}")
     }
 }

@@ -13,9 +13,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
 
     fun getRandomWords(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
         val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfRandomWords, wordsMode)
-        val result = vocabularyDao.getWordsForQuiz(firstLanguageCount, secondLanguageCount)
-        result.forEach { (k, v) -> println("$k   $v") }
-        return result
+        return vocabularyDao.getWordsForQuiz(firstLanguageCount, secondLanguageCount)
     }
 
     private fun getWordCount(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Pair<Int, Int> {
@@ -31,7 +29,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
         return when((numberOfRandomWords % 2) == 0) {
             true -> averageNumber to averageNumber
             false -> {
-                when(Math.random() < 0.5) {
+                when(Math.random() < MEAN) {
                     true -> averageNumber to averageNumber + 1
                     false -> averageNumber + 1 to averageNumber
                 }
@@ -39,3 +37,5 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
         }
     }
 }
+
+private const val MEAN = 0.5
