@@ -1,10 +1,10 @@
-package gq.learningEnglish.common.interfaces
+package gq.learningEnglish.common.infrastructure.interfaces
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import gq.learningEnglish.common.annotations.DbField
-import gq.learningEnglish.common.SerializationType
+import gq.learningEnglish.common.infrastructure.annotations.DbField
+import gq.learningEnglish.common.infrastructure.SerializationType
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.declaredMemberProperties

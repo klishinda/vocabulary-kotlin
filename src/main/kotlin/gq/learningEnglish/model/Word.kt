@@ -1,8 +1,8 @@
 package gq.learningEnglish.model
 
-import gq.learningEnglish.common.SerializationType
-import gq.learningEnglish.common.interfaces.DbEntity
-import gq.learningEnglish.common.annotations.DbField
+import gq.learningEnglish.common.infrastructure.SerializationType
+import gq.learningEnglish.common.infrastructure.interfaces.DbEntity
+import gq.learningEnglish.common.infrastructure.annotations.DbField
 import gq.learningEnglish.model.enums.AvailableLanguages
 
 data class Word(

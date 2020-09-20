@@ -13,7 +13,7 @@ class QuizUserService(
     private val historyDao: HistoryDao
 ) {
 
-    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode) {
+    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode, user: String) {
         val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
         println("Let's start! Write translation to the next words (${quizMap.size} total)")
         quizMap.forEach { (question, answers) ->

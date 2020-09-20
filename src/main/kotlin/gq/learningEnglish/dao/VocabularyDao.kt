@@ -1,6 +1,9 @@
 package gq.learningEnglish.dao
 
-import gq.learningEnglish.common.*
+import gq.learningEnglish.common.infrastructure.JdbcDao
+import gq.learningEnglish.common.infrastructure.namedQuery
+import gq.learningEnglish.common.infrastructure.namedQueryList
+import gq.learningEnglish.common.infrastructure.queryList
 import gq.learningEnglish.model.mapper.QuestionnaireMapper
 import gq.learningEnglish.model.Word
 import gq.learningEnglish.model.questionnaire.Answer

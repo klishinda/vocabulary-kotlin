@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController
 class QuizController(private val userQuestionnaire: QuizUserService) {
 
     @PostMapping("/start")
-    fun startQuiz(@RequestParam wordCount: Int, @RequestParam mode: RandomWordsMode) =
-        userQuestionnaire.quiz(wordCount, mode)
+    fun startQuiz(
+        @RequestParam wordCount: Int,
+        @RequestParam mode: RandomWordsMode,
+        @RequestParam user: String
+    ) = userQuestionnaire.quiz(wordCount, mode, user)
 }

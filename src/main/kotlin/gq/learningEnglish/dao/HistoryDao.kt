@@ -1,7 +1,7 @@
 package gq.learningEnglish.dao
 
-import gq.learningEnglish.common.JdbcDao
-import gq.learningEnglish.common.namedQuery
+import gq.learningEnglish.common.infrastructure.JdbcDao
+import gq.learningEnglish.common.infrastructure.namedQuery
 import gq.learningEnglish.model.enums.RandomWordsMode
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.stereotype.Service

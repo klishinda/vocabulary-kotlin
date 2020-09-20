@@ -1,6 +1,6 @@
 package gq.learningEnglish.model.questionnaire
 
-import gq.learningEnglish.common.annotations.DbField
+import gq.learningEnglish.common.infrastructure.annotations.DbField
 import gq.learningEnglish.model.enums.AvailableLanguages
 
 data class Question(

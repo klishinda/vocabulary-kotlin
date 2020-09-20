@@ -1,8 +1,8 @@
 package gq.learningEnglish.dao
 
-import gq.learningEnglish.common.JdbcDao
-import gq.learningEnglish.common.namedQuery
-import gq.learningEnglish.common.query
+import gq.learningEnglish.common.infrastructure.JdbcDao
+import gq.learningEnglish.common.infrastructure.namedQuery
+import gq.learningEnglish.common.infrastructure.query
 import gq.learningEnglish.model.Word
 import org.springframework.stereotype.Service
 
