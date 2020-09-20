@@ -16,10 +16,11 @@ alter table parts_of_speech add constraint parts_of_speech_u1_name UNIQUE (name)
 create table users (
                      id serial primary key,
                      login varchar(50) not null,
-                     email varchar(50),
+                     email varchar(100) not null,
                      telephone numeric(10)
 );
 
+create index users_i1_login ON users(login);
 alter table users add constraint users_u1_login UNIQUE (login);
 alter table users add constraint users_u2_email UNIQUE (email);
 alter table users add constraint users_u3_telephone UNIQUE (telephone);
@@ -44,7 +45,7 @@ create table vocabulary (
                           comment varchar(500)
 );
 
-alter table vocabulary add constraint vocabulary_u1_words UNIQUE (first_word_id, second_word_id);
+alter table vocabulary add constraint vocabulary_u1_words UNIQUE (user_id, first_word_id, second_word_id);
 alter table vocabulary add constraint vocabulary_f1 FOREIGN KEY (first_word_id) REFERENCES words(id);
 alter table vocabulary add constraint vocabulary_f2 FOREIGN KEY (second_word_id) REFERENCES words(id);
 alter table vocabulary add constraint vocabulary_f3 FOREIGN KEY (user_id) REFERENCES users(id);

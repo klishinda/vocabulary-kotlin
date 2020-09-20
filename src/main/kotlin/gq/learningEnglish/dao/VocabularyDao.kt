@@ -26,11 +26,12 @@ class VocabularyDao(private var jdbc: JdbcDao) {
         return jdbc.namedQuery(ADD_VOCABULARY_PAIR, sqlParams)
     }
 
-    fun getWordsForQuiz(russianWordsNumber: Int, englishWordsNumber: Int): Map<Question, List<Answer>> {
+    fun getWordsForQuiz(russianWordsNumber: Int, englishWordsNumber: Int, userId: Long): Map<Question, List<Answer>> {
         val sqlParams = MapSqlParameterSource(
             mapOf(
                 "numberOfRussianWords" to russianWordsNumber,
-                "numberOfEnglishWords" to englishWordsNumber
+                "numberOfEnglishWords" to englishWordsNumber,
+                "userId" to userId
             )
         )
         return jdbc.namedQuery(GET_RANDOM_WORDS, QuestionnaireMapper(), sqlParams)
@@ -53,23 +54,47 @@ private const val ADD_VOCABULARY_PAIR =
     "insert into vocabulary(user_id, first_word_id, second_word_id) values (:userId, :firstId, :secondId) returning id"
 private const val GET_RANDOM_WORDS =
     """with wrd as (
-        (select w.* from words w where w.language = 'ENGLISH' and exists (
-            select 1 from vocabulary vv where vv.first_word_id = w.id or vv.second_word_id = w.id)
-        order by random() limit :numberOfEnglishWords)
+        (select w.*
+         from words w
+         where w.language = 'ENGLISH'
+           and exists(select 1
+                      from vocabulary vv
+                      where vv.user_id = :userId
+                        and (vv.first_word_id = w.id or vv.second_word_id = w.id))
+         order by random()
+         limit :numberOfEnglishWords)
         union all
-        (select w.* from words w where w.language = 'RUSSIAN' and exists (
-            select 1 from vocabulary vv where vv.first_word_id = w.id or vv.second_word_id = w.id)
-        order by random() limit :numberOfRussianWords)
+        (select w.*
+         from words w
+         where w.language = 'RUSSIAN'
+           and exists(select 1
+                      from vocabulary vv
+                      where vv.user_id = :userId
+                        and (vv.first_word_id = w.id or vv.second_word_id = w.id))
+         order by random()
+         limit :numberOfRussianWords)
     )
-    select wrd.id as asking_word_id, wrd.word as asking_word, wrd.description, v.id as vocabulary_id,
-    translate.id as answer_word_id, translate.word as answer_word, wrd.language as asking_language from wrd
-    join public.vocabulary v on v.first_word_id = wrd.id
-    join public.words translate on translate.id = v.second_word_id
+    select wrd.id         as asking_word_id,
+           wrd.word       as asking_word,
+           wrd.description,
+           v.id           as vocabulary_id,
+           translate.id   as answer_word_id,
+           translate.word as answer_word,
+           wrd.language   as asking_language
+    from wrd
+             join public.vocabulary v on v.first_word_id = wrd.id
+             join public.words translate on translate.id = v.second_word_id
     union all
-    select wrd.id as asking_word_id, wrd.word as asking_word, wrd.description, v.id as vocabulary_id,
-    translate.id as answer_word_id, translate.word as answer_word, wrd.language as asking_language from wrd
-    join public.vocabulary v on v.second_word_id = wrd.id
-    join public.words translate on translate.id = v.first_word_id"""
+    select wrd.id         as asking_word_id,
+           wrd.word       as asking_word,
+           wrd.description,
+           v.id           as vocabulary_id,
+           translate.id   as answer_word_id,
+           translate.word as answer_word,
+           wrd.language   as asking_language
+    from wrd
+             join public.vocabulary v on v.second_word_id = wrd.id
+             join public.words translate on translate.id = v.first_word_id"""
 private const val GET_TRANSLATE =
     """select * from words where id in (
         select second_word_id from vocabulary where user_id = :userId and first_word_id = :wordId

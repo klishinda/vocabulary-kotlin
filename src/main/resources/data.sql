@@ -1,4 +1,5 @@
-insert into users values (101, 'TRONIX', 'klishin.d.a@gmail.com', '9031055324');
+insert into users values (101, 'Tronix', 'klishin.d.a@gmail.com', '9031055324');
+insert into users values (1, 'Tester', 'test@gmail.com', '911');
 
 insert into parts_of_speech values (101, 'Существительное');
 insert into parts_of_speech values (102, 'Прилагательное');
@@ -49,3 +50,4 @@ insert into vocabulary values (30011, 101, 10011, 20010, current_date, null);
 insert into vocabulary values (30012, 101, 10012, 20011, current_date, null);
 insert into vocabulary values (30013, 101, 10013, 20012, current_date, null);
 insert into vocabulary values (30014, 101, 10014, 20013, current_date, null);
+insert into vocabulary values (30015,   1, 10001, 20001, current_date, null);

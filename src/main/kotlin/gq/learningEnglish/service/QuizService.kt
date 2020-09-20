@@ -11,13 +11,17 @@ import kotlin.math.floor
 @Service
 class QuizService(private val vocabularyDao: VocabularyDao) {
 
-    fun getRandomWords(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Map<Question, List<Answer>> {
+    fun getRandomWords(
+        numberOfRandomWords: Int,
+        userId: Long,
+        wordsMode: RandomWordsMode
+    ): Map<Question, List<Answer>> {
         val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfRandomWords, wordsMode)
-        return vocabularyDao.getWordsForQuiz(firstLanguageCount, secondLanguageCount)
+        return vocabularyDao.getWordsForQuiz(firstLanguageCount, secondLanguageCount, userId)
     }
 
     private fun getWordCount(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Pair<Int, Int> {
-        return when(wordsMode) {
+        return when (wordsMode) {
             ENGLISH -> 0 to numberOfRandomWords
             RUSSIAN -> numberOfRandomWords to 0
             ABSOLUTE_RANDOM -> getNumberForRandom(numberOfRandomWords)
@@ -26,10 +30,10 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
 
     private fun getNumberForRandom(numberOfRandomWords: Int): Pair<Int, Int> {
         val averageNumber = floor(numberOfRandomWords / 2.toDouble()).toInt()
-        return when((numberOfRandomWords % 2) == 0) {
+        return when ((numberOfRandomWords % 2) == 0) {
             true -> averageNumber to averageNumber
             false -> {
-                when(Math.random() < MEAN) {
+                when (Math.random() < MEAN) {
                     true -> averageNumber to averageNumber + 1
                     false -> averageNumber + 1 to averageNumber
                 }

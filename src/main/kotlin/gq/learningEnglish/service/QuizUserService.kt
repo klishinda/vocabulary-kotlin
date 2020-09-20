@@ -1,6 +1,6 @@
 package gq.learningEnglish.service
 
-import gq.learningEnglish.dao.HistoryDao
+import gq.learningEnglish.dao.QuizDao
 import gq.learningEnglish.model.enums.RandomWordsMode
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
@@ -10,17 +10,18 @@ import java.util.*
 @Service
 class QuizUserService(
     private val quizService: QuizService,
-    private val historyDao: HistoryDao
+    private val quizDao: QuizDao
 ) {
 
-    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode, user: String) {
-        val quizMap = quizService.getRandomWords(numberOfRandomWords, wordsMode)
+    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode, username: String) {
+        val userId = quizDao.getUserId(username)
+        val quizMap = quizService.getRandomWords(numberOfRandomWords, userId, wordsMode)
         println("Let's start! Write translation to the next words (${quizMap.size} total)")
         quizMap.forEach { (question, answers) ->
             println("${question.askingWord} ${question.description.orEmpty()}")
             processQuiz(answers)
         }
-        processResults(quizMap, wordsMode)
+        processResults(userId, quizMap, wordsMode)
     }
 
     private fun processQuiz(answers: List<Answer>) {
@@ -45,8 +46,8 @@ class QuizUserService(
         }
     }
 
-    private fun processResults(quizMap: Map<Question, List<Answer>>, wordsMode: RandomWordsMode) {
-        val launchId = historyDao.addLaunchInfo(101L, wordsMode)
+    private fun processResults(userId: Long, quizMap: Map<Question, List<Answer>>, wordsMode: RandomWordsMode) {
+        val launchId = quizDao.addLaunchInfo(userId, wordsMode)
         val results = quizMap.values.flatten()
         println("Общая статистика по ответам:")
         quizMap.forEach { (question, answers) ->
@@ -54,7 +55,7 @@ class QuizUserService(
             for (answer in answers) {
                 println("Правильный ответ: ${answer.answerWord}")
                 println("Ваш ответ: ${answer.userAnswer}. ${resultMapping[answer.result]}")
-                historyDao.addHistory(answer.setAnswerHistoryMap(launchId, question.askingWordId))
+                quizDao.addHistory(answer.setAnswerHistoryMap(launchId, question.askingWordId))
             }
         }
         println("\nОбщее количество слов: ${results.size}")
