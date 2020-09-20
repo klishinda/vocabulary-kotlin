@@ -1,14 +1,28 @@
 package gq.learningEnglish.model.questionnaire
 
-import gq.learningEnglish.common.annotations.DbField
+import gq.learningEnglish.common.infrastructure.annotations.DbField
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 
 data class Answer(
     @DbField(value = "vocabulary_id")
-    var vocabularyId: Int,
+    val vocabularyId: Long,
     @DbField(value = "answer_word_id")
-    var answerWordId: Int,
+    val answerWordId: Long,
     @DbField(value = "answer_word")
-    var answerWord: String?
+    val answerWord: String
 ) {
+    var userAnswer: String? = null
     var result: Boolean = false
+
+    fun setAnswerHistoryMap(launchId: Long, askingWordId: Long): MapSqlParameterSource {
+        return MapSqlParameterSource(
+            mapOf(
+                "launchId" to launchId,
+                "vocabularyId" to vocabularyId,
+                "askingWord" to askingWordId,
+                "userAnswer" to userAnswer,
+                "result" to result
+            )
+        )
+    }
 }

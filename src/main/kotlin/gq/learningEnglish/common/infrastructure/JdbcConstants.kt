@@ -1,4 +1,4 @@
-package gq.learningEnglish.common
+package gq.learningEnglish.common.infrastructure
 
 import java.math.BigDecimal
 import java.sql.Date

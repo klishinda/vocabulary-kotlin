@@ -1,4 +1,4 @@
-package gq.learningEnglish.common
+package gq.learningEnglish.common.infrastructure
 
 import org.springframework.jdbc.core.SingleColumnRowMapper
 import org.springframework.jdbc.core.namedparam.SqlParameterSource

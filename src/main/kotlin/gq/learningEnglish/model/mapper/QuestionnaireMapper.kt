@@ -1,6 +1,6 @@
 package gq.learningEnglish.model.mapper
 
-import gq.learningEnglish.common.KotlinRowMapper
+import gq.learningEnglish.common.infrastructure.KotlinRowMapper
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
 import org.springframework.jdbc.core.RowMapper

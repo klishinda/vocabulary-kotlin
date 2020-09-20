@@ -1,7 +1,7 @@
 package gq.learningEnglish.configuration
 
 import com.zaxxer.hikari.HikariDataSource
-import gq.learningEnglish.common.JdbcDao
+import gq.learningEnglish.common.infrastructure.JdbcDao
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

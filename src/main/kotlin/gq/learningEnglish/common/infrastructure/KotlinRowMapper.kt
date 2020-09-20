@@ -1,11 +1,11 @@
-package gq.learningEnglish.common
+package gq.learningEnglish.common.infrastructure
 
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.type.TypeFactory
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import gq.learningEnglish.common.annotations.DbField
-import gq.learningEnglish.common.interfaces.Logger
+import gq.learningEnglish.common.infrastructure.annotations.DbField
+import gq.learningEnglish.common.infrastructure.interfaces.Logger
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.support.JdbcUtils
 import java.sql.ResultSet
@@ -143,7 +143,11 @@ class KotlinRowMapper<T : Any>(
         private fun ResultSet.jsonToObject(index: Int, parameter: KParameter, mapper: ObjectMapper): Any? {
             val stringValue: String? = getString(index)
             return when {
-                parameter.type.arguments.isNotEmpty() -> toGenericType(stringValue, parameter, mapper)
+                parameter.type.arguments.isNotEmpty() -> toGenericType(
+                    stringValue,
+                    parameter,
+                    mapper
+                )
                 else -> mapper.readValue(stringValue, parameter.clazz.java)
             }
         }
@@ -158,20 +162,37 @@ class KotlinRowMapper<T : Any>(
                 when {
                     isSubclassOf(Map::class) -> factory.constructMapType(
                         HashMap::class.java,
-                        toJavaTypeRecursively(typeArguments[0], factory),
-                        toJavaTypeRecursively(typeArguments[1], factory)
+                        toJavaTypeRecursively(
+                            typeArguments[0],
+                            factory
+                        ),
+                        toJavaTypeRecursively(
+                            typeArguments[1],
+                            factory
+                        )
                     )
                     isSubclassOf(List::class) -> factory.constructCollectionType(
                         ArrayList::class.java,
-                        toJavaTypeRecursively(typeArguments.first(), factory)
+                        toJavaTypeRecursively(
+                            typeArguments.first(),
+                            factory
+                        )
                     )
                     isSubclassOf(Set::class) -> factory.constructCollectionType(
                         HashSet::class.java,
-                        toJavaTypeRecursively(typeArguments.first(), factory)
+                        toJavaTypeRecursively(
+                            typeArguments.first(),
+                            factory
+                        )
                     )
                     else -> factory.constructParametricType(
                         this::class.java,
-                        *typeArguments.map { toJavaTypeRecursively(it, factory) }.toTypedArray()
+                        *typeArguments.map {
+                            toJavaTypeRecursively(
+                                it,
+                                factory
+                            )
+                        }.toTypedArray()
                     )
                 }
             }
@@ -180,27 +201,54 @@ class KotlinRowMapper<T : Any>(
 
         private fun toJavaTypeRecursively(projection: KTypeProjection, factory: TypeFactory): JavaType {
             if (projection.type == null) {
-                return factory.constructType(toJavaClass(projection))
+                return factory.constructType(
+                    toJavaClass(
+                        projection
+                    )
+                )
             }
             projection.type!!.run {
                 return when {
-                    this.arguments.isEmpty() -> factory.constructType(toJavaClass(projection))
+                    this.arguments.isEmpty() -> factory.constructType(
+                        toJavaClass(
+                            projection
+                        )
+                    )
                     this.isSubtypeOf(MAP_TYPE) -> factory.constructMapType(
                         HashMap::class.java,
-                        toJavaTypeRecursively(this.arguments[0], factory),
-                        toJavaTypeRecursively(this.arguments[1], factory)
+                        toJavaTypeRecursively(
+                            this.arguments[0],
+                            factory
+                        ),
+                        toJavaTypeRecursively(
+                            this.arguments[1],
+                            factory
+                        )
                     )
                     this.isSubtypeOf(LIST_TYPE) -> factory.constructCollectionType(
                         ArrayList::class.java,
-                        toJavaTypeRecursively(this.arguments.first(), factory)
+                        toJavaTypeRecursively(
+                            this.arguments.first(),
+                            factory
+                        )
                     )
                     this.isSubtypeOf(SET_TYPE) -> factory.constructCollectionType(
                         HashSet::class.java,
-                        toJavaTypeRecursively(this.arguments.first(), factory)
+                        toJavaTypeRecursively(
+                            this.arguments.first(),
+                            factory
+                        )
                     )
                     else -> factory.constructParametricType(
-                        toJavaClass(projection),
-                        *arguments.map { toJavaTypeRecursively(it, factory) }.toTypedArray()
+                        toJavaClass(
+                            projection
+                        ),
+                        *arguments.map {
+                            toJavaTypeRecursively(
+                                it,
+                                factory
+                            )
+                        }.toTypedArray()
                     )
                 }
             }
