@@ -20,7 +20,7 @@ class QuizUserService(
             println("${question.askingWord} ${question.description.orEmpty()}")
             processQuiz(answers)
         }
-        processResults(quizMap)
+        processResults(quizMap, wordsMode)
     }
 
     private fun processQuiz(answers: List<Answer>) {
@@ -45,7 +45,8 @@ class QuizUserService(
         }
     }
 
-    private fun processResults(quizMap: Map<Question, List<Answer>>) {
+    private fun processResults(quizMap: Map<Question, List<Answer>>, wordsMode: RandomWordsMode) {
+        val launchId = historyDao.addLaunchInfo(101L, wordsMode)
         val results = quizMap.values.flatten()
         println("Общая статистика по ответам:")
         quizMap.forEach { (question, answers) ->
@@ -53,7 +54,7 @@ class QuizUserService(
             for (answer in answers) {
                 println("Правильный ответ: ${answer.answerWord}")
                 println("Ваш ответ: ${answer.userAnswer}. ${resultMapping[answer.result]}")
-                historyDao.addHistory(answer.setAnswerHistoryMap(101L, question.askingWordId))
+                historyDao.addHistory(answer.setAnswerHistoryMap(launchId, question.askingWordId))
             }
         }
         println("\nОбщее количество слов: ${results.size}")

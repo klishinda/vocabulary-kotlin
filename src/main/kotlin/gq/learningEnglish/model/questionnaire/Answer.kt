@@ -14,10 +14,10 @@ data class Answer(
     var userAnswer: String? = null
     var result: Boolean = false
 
-    fun setAnswerHistoryMap(userId: Long, askingWordId: Long): MapSqlParameterSource {
+    fun setAnswerHistoryMap(launchId: Long, askingWordId: Long): MapSqlParameterSource {
         return MapSqlParameterSource(
             mapOf(
-                "userId" to userId,
+                "launchId" to launchId,
                 "vocabularyId" to vocabularyId,
                 "askingWord" to askingWordId,
                 "userAnswer" to userAnswer,
