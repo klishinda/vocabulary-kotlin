@@ -1,5 +1,6 @@
 package gq.learningEnglish.service
 
+import gq.learningEnglish.dao.CommonDao
 import gq.learningEnglish.dao.QuizDao
 import gq.learningEnglish.model.enums.RandomWordsMode
 import gq.learningEnglish.model.questionnaire.Answer
@@ -10,11 +11,12 @@ import java.util.*
 @Service
 class QuizUserService(
     private val quizService: QuizService,
-    private val quizDao: QuizDao
+    private val quizDao: QuizDao,
+    private val commonDao: CommonDao
 ) {
 
     fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode, username: String) {
-        val userId = quizDao.getUserId(username)
+        val userId = commonDao.getUserId(username)
         val quizMap = quizService.getRandomWords(numberOfRandomWords, userId, wordsMode)
         println("Let's start! Write translation to the next words (${quizMap.size} total)")
         quizMap.forEach { (question, answers) ->
