@@ -6,6 +6,7 @@ insert into parts_of_speech values (102, 'Прилагательное');
 insert into parts_of_speech values (103, 'Глагол');
 insert into parts_of_speech values (104, 'Наречие');
 insert into parts_of_speech values (105, 'Предлог');
+insert into parts_of_speech values (106, 'Выражение');
 
 insert into words values (10001, 101, 'БЕЛЫЙ', 'RUSSIAN', null, 102);
 insert into words values (10002, 101, 'СИНИЙ', 'RUSSIAN', null, 102);
@@ -24,6 +25,7 @@ insert into words values (10014, 101, 'ЛУК', 'RUSSIAN', 'растение', 1
 insert into words values (10015, 1, 'МЕЧТАТЬ', 'RUSSIAN', null, 103);
 insert into words values (10016, 1, 'СНИТЬСЯ', 'RUSSIAN', null, 103);
 insert into words values (10017, 1, 'ИНАЧЕ', 'RUSSIAN', null, null);
+insert into words values (10018, 101, 'УТРО ВЕЧЕРА МУДРЕНЕЕ', 'RUSSIAN', null, 106);
 
 insert into words values (20001, 101, 'WHITE', 'ENGLISH', null, null);
 insert into words values (20002, 101, 'DO', 'ENGLISH', null, null);
@@ -41,6 +43,7 @@ insert into words values (20013, 101, 'ONION', 'ENGLISH', null, null);
 insert into words values (20014, 1, 'DREAM', 'ENGLISH', null, null);
 insert into words values (20015, 1, 'SWEAR', 'ENGLISH', null, null);
 insert into words values (20016, 1, 'OTHERWISE', 'ENGLISH', null, 103);
+insert into words values (20017, 101, 'SLEEP ON IT', 'ENGLISH', null, 106);
 
 insert into vocabulary values (30001, 101, 10001, 20001, current_date, null);
 insert into vocabulary values (30002, 101, 10003, 20002, current_date, null);
@@ -59,3 +62,4 @@ insert into vocabulary values (30014, 101, 10014, 20013, current_date, null);
 insert into vocabulary values (30015,   1, 10015, 20014, current_date, null);
 insert into vocabulary values (30016,   1, 10016, 20014, current_date, null);
 insert into vocabulary values (30017,   1, 10017, 20016, current_date, null);
+insert into vocabulary values (30018, 101, 10018, 20017, current_date, null);
