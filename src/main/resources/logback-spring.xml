@@ -20,9 +20,11 @@
         </encoder>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOGS}/vocabulary-kotlin.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOGS}/arc/vocabulary-kotlin.%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
     </appender>
+
+    <logger name="org.springframework.web.filter.CustomizableRequestLoggingFilter" level="DEBUG"/>
 
     <root level="info">
         <appender-ref ref="STDOUT"/>
