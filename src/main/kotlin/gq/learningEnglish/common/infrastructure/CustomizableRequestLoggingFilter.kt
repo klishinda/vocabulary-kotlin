@@ -7,6 +7,7 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter
 import org.springframework.web.util.ContentCachingRequestWrapper
 import org.springframework.web.util.ContentCachingResponseWrapper
 import org.springframework.web.util.WebUtils
+import java.io.UnsupportedEncodingException
 import java.lang.StringBuilder
 import java.nio.charset.Charset
 import javax.servlet.FilterChain
@@ -19,11 +20,16 @@ class CustomizableRequestLoggingFilter(
     includeQueryString: Boolean = true
 ) : CommonsRequestLoggingFilter(), Logger {
 
+    private val loggedHeaders = mutableListOf<String>()
+
     init {
+        loggedHeaders.addAll(DEFAULT_LOGGED_HEADERS)
         isIncludeHeaders = includeLogHeaders
         isIncludePayload = includePayload
         isIncludeQueryString = includeQueryString
     }
+
+    fun addLoggedHeaders(vararg headers: String) = loggedHeaders.addAll(listOf(*headers))
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -54,8 +60,8 @@ class CustomizableRequestLoggingFilter(
             append(";uri=").append(request.requestURI)
             includeQueryString(request)
             includeClientInfo(request)
-            includePayload(request)
             includeHeaders(request)
+            includePayload(request)
             logResponse(response)
             append(suffix)
         }.toString()
@@ -80,10 +86,28 @@ class CustomizableRequestLoggingFilter(
         return wrapper?.let {
             val buffer = wrapper.contentAsByteArray
             if (buffer.isNotEmpty()) {
-                val length = buffer.size.coerceAtMost(10000)
+                val length = buffer.size.coerceAtMost(MAXIMUM_PAYLOAD_LENGTH)
                 String(buffer, 0, length, Charset.forName(wrapper.characterEncoding))
             } else null
         }
+    }
+
+    private fun getResponsePayload(request: HttpServletResponse): String? {
+        val wrapper = WebUtils.getNativeResponse(request, ContentCachingResponseWrapper::class.java)
+        if (wrapper != null) {
+            val buffer = wrapper.contentAsByteArray
+            if (buffer.isNotEmpty()) {
+                val length = buffer.size.coerceAtMost(MAXIMUM_PAYLOAD_LENGTH)
+                return try {
+                    String(buffer, 0, length, Charset.forName(wrapper.characterEncoding))
+                } catch (e: UnsupportedEncodingException) {
+                    "[UnsupportedEncodingException]"
+                } finally {
+                    wrapper.copyBodyToResponse()
+                }
+            }
+        }
+        return null
     }
 
     private fun StringBuilder.includePayload(request: HttpServletRequest) {
@@ -95,24 +119,13 @@ class CustomizableRequestLoggingFilter(
         val headers = ServletServerHttpRequest(request).headers
         append(";headers=")
         headers.forEach { k: String, v: List<String?>? ->
-            append("[$k=$v]")
+            if (loggedHeaders.contains(k.toLowerCase())) append("($k=$v)")
         }
     }
 
     private fun StringBuilder.logResponse(response: HttpServletResponse) {
-        val payload = getMessagePayload(response)
+        val payload = getResponsePayload(response)
         if (payload != null) append(";response=").append(payload)
-    }
-
-    private fun getMessagePayload(response: HttpServletResponse): String? {
-        val wrapper = WebUtils.getNativeResponse(response, ContentCachingResponseWrapper::class.java)
-        if (wrapper != null) {
-            val buffer = wrapper.contentAsByteArray
-            if (buffer.isEmpty()) {
-                return String(buffer)
-            }
-        }
-        return null
     }
 
     private fun getBeforeMessage(request: HttpServletRequest, response: HttpServletResponse): String =
@@ -131,3 +144,6 @@ class CustomizableRequestLoggingFilter(
             AbstractRequestLoggingFilter.DEFAULT_AFTER_MESSAGE_SUFFIX
         )
 }
+
+private val DEFAULT_LOGGED_HEADERS = listOf("host", "content-length", "content-type")
+private const val MAXIMUM_PAYLOAD_LENGTH = 10000
