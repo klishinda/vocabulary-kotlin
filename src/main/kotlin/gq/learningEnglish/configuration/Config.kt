@@ -28,7 +28,8 @@ open class Config {
     open fun postgreDataSource(configuration: PostgreConfiguration): HikariDataSource = HikariDataSource(configuration)
 
     @Bean
-    open fun logFilter(): CommonsRequestLoggingFilter = CustomizableRequestLoggingFilter()
+    open fun logFilter(): CommonsRequestLoggingFilter =
+        CustomizableRequestLoggingFilter().apply { addEnabledEndpoints("/vocabulary", "/quiz") }
 
     @Bean
     open fun api(): Docket {

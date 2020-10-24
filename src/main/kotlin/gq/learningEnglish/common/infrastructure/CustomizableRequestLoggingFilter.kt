@@ -20,14 +20,21 @@ class CustomizableRequestLoggingFilter(
     includeQueryString: Boolean = true
 ) : CommonsRequestLoggingFilter(), Logger {
 
+    private val whiteListUrls = mutableListOf<String>()
+    private val blackListUrls = mutableListOf<String>()
     private val loggedHeaders = mutableListOf<String>()
 
     init {
+        blackListUrls.addAll(DEFAULT_DISABLED_ENDPOINTS)
         loggedHeaders.addAll(DEFAULT_LOGGED_HEADERS)
         isIncludeHeaders = includeLogHeaders
         isIncludePayload = includePayload
         isIncludeQueryString = includeQueryString
     }
+
+    fun addEnabledEndpoints(vararg urls: String) = whiteListUrls.addAll(listOf(*urls))
+
+    fun addDisabledEndpoints(vararg urls: String) = blackListUrls.addAll(listOf(*urls))
 
     fun addLoggedHeaders(vararg headers: String) = loggedHeaders.addAll(listOf(*headers))
 
@@ -36,6 +43,10 @@ class CustomizableRequestLoggingFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
+        if (!checkLoggedUrls(request.requestURL.toString())) {
+            filterChain.doFilter(request, response)
+            return
+        }
         val requestToUse = ContentCachingRequestWrapper(request)
         val responseToUse = ContentCachingResponseWrapper(response)
         val v = getBeforeMessage(requestToUse, responseToUse)
@@ -45,8 +56,10 @@ class CustomizableRequestLoggingFilter(
         val vv = getAfterMessage(requestToUse, responseToUse)
         println(vv)
         afterRequest(requestToUse, getAfterMessage(requestToUse, responseToUse))
-        //filterChain.doFilter(request, response)
     }
+
+    private fun checkLoggedUrls(url: String) =
+        !(blackListUrls.any { url.contains(it) }) && whiteListUrls.any { url.contains(it) }
 
     private fun createMessage(
         request: HttpServletRequest,
@@ -145,5 +158,6 @@ class CustomizableRequestLoggingFilter(
         )
 }
 
+private val DEFAULT_DISABLED_ENDPOINTS = listOf("/swagger")
 private val DEFAULT_LOGGED_HEADERS = listOf("host", "content-length", "content-type")
 private const val MAXIMUM_PAYLOAD_LENGTH = 10000
