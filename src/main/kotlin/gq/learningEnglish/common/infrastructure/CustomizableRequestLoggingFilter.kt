@@ -49,12 +49,12 @@ class CustomizableRequestLoggingFilter(
         }
         val requestToUse = ContentCachingRequestWrapper(request)
         val responseToUse = ContentCachingResponseWrapper(response)
-        val v = getBeforeMessage(requestToUse, responseToUse)
-        println(v)
-        beforeRequest(requestToUse, v)
+        val beforeMessage = getBeforeMessage(requestToUse, responseToUse)
+        log.info(beforeMessage)
+        beforeRequest(requestToUse, beforeMessage)
         filterChain.doFilter(requestToUse, responseToUse)
-        val vv = getAfterMessage(requestToUse, responseToUse)
-        println(vv)
+        val afterMessage = getAfterMessage(requestToUse, responseToUse)
+        log.info(afterMessage)
         afterRequest(requestToUse, getAfterMessage(requestToUse, responseToUse))
     }
 
