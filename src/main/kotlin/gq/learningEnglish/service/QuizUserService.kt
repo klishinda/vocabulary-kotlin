@@ -1,5 +1,7 @@
 package gq.learningEnglish.service
 
+import gq.learningEnglish.common.infrastructure.interfaces.Logger
+import gq.learningEnglish.dao.CommonDao
 import gq.learningEnglish.dao.QuizDao
 import gq.learningEnglish.model.enums.RandomWordsMode
 import gq.learningEnglish.model.questionnaire.Answer
@@ -10,13 +12,14 @@ import java.util.*
 @Service
 class QuizUserService(
     private val quizService: QuizService,
-    private val quizDao: QuizDao
-) {
+    private val quizDao: QuizDao,
+    private val commonDao: CommonDao
+) : Logger {
 
     fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode, username: String) {
-        val userId = quizDao.getUserId(username)
+        val userId = commonDao.getUserId(username)
         val quizMap = quizService.getRandomWords(numberOfRandomWords, userId, wordsMode)
-        println("Let's start! Write translation to the next words (${quizMap.size} total)")
+        log.info("Let's start! Write translation to the next words (${quizMap.size} total)")
         quizMap.forEach { (question, answers) ->
             println("${question.askingWord} ${question.description.orEmpty()}")
             processQuiz(answers)
@@ -28,7 +31,7 @@ class QuizUserService(
         val scanner = Scanner(System.`in`)
         val wrongAnswers: MutableList<String> = mutableListOf()
         for (answer in answers) {
-            println("Your answer: ")
+            log.info("Your answer: ")
             val userAnswer = scanner.nextLine().toUpperCase()
             if (answers.stream().anyMatch { s: Answer -> s.answerWord == userAnswer && !s.result }) {
                 answers.stream().filter { s: Answer -> s.answerWord == userAnswer }
@@ -49,17 +52,21 @@ class QuizUserService(
     private fun processResults(userId: Long, quizMap: Map<Question, List<Answer>>, wordsMode: RandomWordsMode) {
         val launchId = quizDao.addLaunchInfo(userId, wordsMode)
         val results = quizMap.values.flatten()
-        println("Общая статистика по ответам:")
+        log.info("Общая статистика по ответам:")
         quizMap.forEach { (question, answers) ->
-            println("\nВопрос: ${question.askingWord} ${question.description.orEmpty()}")
+            log.info("Вопрос: ${question.askingWord} ${question.description.orEmpty()}")
             for (answer in answers) {
-                println("Правильный ответ: ${answer.answerWord}")
-                println("Ваш ответ: ${answer.userAnswer}. ${resultMapping[answer.result]}")
+                log.info(
+                    "Правильный ответ: ${answer.answerWord}\n" +
+                            "Ваш ответ: ${answer.userAnswer}. ${resultMapping[answer.result]}"
+                )
                 quizDao.addHistory(answer.setAnswerHistoryMap(launchId, question.askingWordId))
             }
         }
-        println("\nОбщее количество слов: ${results.size}")
-        println("Количество правильных ответов: ${results.filter { x -> x.result }.size}")
+        log.info(
+            "Общее количество слов: ${results.size} " +
+                    "Количество правильных ответов: ${results.filter { x -> x.result }.size}"
+        )
     }
 }
 

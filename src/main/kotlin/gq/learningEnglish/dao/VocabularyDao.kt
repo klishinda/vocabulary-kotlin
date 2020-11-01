@@ -57,20 +57,22 @@ private const val GET_RANDOM_WORDS =
         (select w.*
          from words w
          where w.language = 'ENGLISH'
+           and w.user_id = :userId
            and exists(select 1
                       from vocabulary vv
-                      where vv.user_id = :userId
-                        and (vv.first_word_id = w.id or vv.second_word_id = w.id))
+                      where vv.first_word_id = w.id
+                         or vv.second_word_id = w.id)
          order by random()
          limit :numberOfEnglishWords)
         union all
         (select w.*
          from words w
          where w.language = 'RUSSIAN'
+           and w.user_id = :userId
            and exists(select 1
                       from vocabulary vv
-                      where vv.user_id = :userId
-                        and (vv.first_word_id = w.id or vv.second_word_id = w.id))
+                      where vv.first_word_id = w.id
+                         or vv.second_word_id = w.id)
          order by random()
          limit :numberOfRussianWords)
     )

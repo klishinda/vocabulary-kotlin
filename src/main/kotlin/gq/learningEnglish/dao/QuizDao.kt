@@ -1,17 +1,13 @@
 package gq.learningEnglish.dao
 
-import gq.learningEnglish.common.GET_USER_ID
 import gq.learningEnglish.common.infrastructure.JdbcDao
 import gq.learningEnglish.common.infrastructure.namedQuery
-import gq.learningEnglish.common.infrastructure.query
 import gq.learningEnglish.model.enums.RandomWordsMode
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.stereotype.Service
 
 @Service
 class QuizDao(private var jdbc: JdbcDao) {
-
-    fun getUserId(username: String): Long = jdbc.query(GET_USER_ID, username)
 
     fun addHistory(historyMap: MapSqlParameterSource) = jdbc.namedUpdate(ADD_HISTORY_RECORD, historyMap)
 
