@@ -3,7 +3,7 @@ package gq.learningEnglish.service
 import gq.learningEnglish.common.infrastructure.interfaces.Logger
 import gq.learningEnglish.dao.CommonDao
 import gq.learningEnglish.dao.QuizDao
-import gq.learningEnglish.model.enums.RandomWordsMode
+import gq.learningEnglish.model.enums.QuestionnaireModes
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
 import org.springframework.stereotype.Service
@@ -16,9 +16,9 @@ class QuizUserService(
     private val commonDao: CommonDao
 ) : Logger {
 
-    fun quiz(numberOfRandomWords: Int, wordsMode: RandomWordsMode, username: String) {
+    fun quiz(numberOfWords: Int, wordsMode: QuestionnaireModes, username: String) {
         val userId = commonDao.getUserId(username)
-        val quizMap = quizService.getRandomWords(numberOfRandomWords, userId, wordsMode)
+        val quizMap = quizService.getWordsForQuiz(numberOfWords, userId, wordsMode)
         log.info("Let's start! Write translation to the next words (${quizMap.size} total)")
         quizMap.forEach { (question, answers) ->
             println("${question.askingWord} ${question.description.orEmpty()}")
@@ -49,7 +49,7 @@ class QuizUserService(
         }
     }
 
-    private fun processResults(userId: Long, quizMap: Map<Question, List<Answer>>, wordsMode: RandomWordsMode) {
+    private fun processResults(userId: Long, quizMap: Map<Question, List<Answer>>, wordsMode: QuestionnaireModes) {
         val launchId = quizDao.addLaunchInfo(userId, wordsMode)
         val results = quizMap.values.flatten()
         log.info("Общая статистика по ответам:")
