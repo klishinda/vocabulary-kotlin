@@ -26,7 +26,7 @@ class VocabularyDao(private var jdbc: JdbcDao) {
         return jdbc.namedQuery(ADD_VOCABULARY_PAIR, sqlParams)
     }
 
-    fun getWordsForQuiz(russianWordsNumber: Int, englishWordsNumber: Int, userId: Long): Map<Question, List<Answer>> {
+    fun getRandomWords(russianWordsNumber: Int, englishWordsNumber: Int, userId: Long): Map<Question, List<Answer>> {
         val sqlParams = MapSqlParameterSource(
             mapOf(
                 "numberOfRussianWords" to russianWordsNumber,
@@ -35,6 +35,16 @@ class VocabularyDao(private var jdbc: JdbcDao) {
             )
         )
         return jdbc.namedQuery(GET_RANDOM_WORDS, QuestionnaireMapper(), sqlParams)
+    }
+
+    fun getLessUsedWords(wordCount: Int, userId: Long): Map<Question, List<Answer>> {
+        val sqlParams = MapSqlParameterSource(
+            mapOf(
+                "wordCount" to wordCount,
+                "userId" to userId
+            )
+        )
+        return jdbc.namedQuery(GET_LESS_USED_WORDS, QuestionnaireMapper(), sqlParams)
     }
 
     fun getTranslate(wordId: Long, userId: Long): List<Word>? {
@@ -84,19 +94,38 @@ private const val GET_RANDOM_WORDS =
            translate.word as answer_word,
            wrd.language   as asking_language
     from wrd
-             join public.vocabulary v on v.first_word_id = wrd.id
-             join public.words translate on translate.id = v.second_word_id
-    union all
-    select wrd.id         as asking_word_id,
+             join public.vocabulary v on v.first_word_id = wrd.id or v.second_word_id = wrd.id
+             join public.words translate on translate.id =
+                                            case
+                                                when v.first_word_id = wrd.id then v.second_word_id
+                                                when v.second_word_id = wrd.id then v.first_word_id
+                                            end"""
+private const val GET_LESS_USED_WORDS =
+    """select wrd.id         as asking_word_id,
            wrd.word       as asking_word,
            wrd.description,
            v.id           as vocabulary_id,
            translate.id   as answer_word_id,
            translate.word as answer_word,
            wrd.language   as asking_language
-    from wrd
-             join public.vocabulary v on v.second_word_id = wrd.id
-             join public.words translate on translate.id = v.first_word_id"""
+    from words wrd
+    join (
+        select w.id,
+               sum(case when h.asking_word = w.id then 1 else 0 end) all_calls
+        from words w
+        join vocabulary v on v.first_word_id = w.id or v.second_word_id = w.id
+        left join history h on h.vocabulary_id = v.id
+        where w.user_id = :userId
+        group by w.id, w.word, w.description
+    ) ww on ww.id = wrd.id
+    join vocabulary v on v.first_word_id = wrd.id or v.second_word_id = wrd.id
+    join words translate on translate.id =
+                            case
+                                when v.first_word_id = wrd.id then v.second_word_id
+                                when v.second_word_id = wrd.id then v.first_word_id
+                            end
+    order by all_calls, random()
+    limit :wordCount"""
 private const val GET_TRANSLATE =
     """select * from words where id in (
         select second_word_id from vocabulary where user_id = :userId and first_word_id = :wordId

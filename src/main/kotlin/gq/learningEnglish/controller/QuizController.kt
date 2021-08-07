@@ -1,6 +1,6 @@
 package gq.learningEnglish.controller
 
-import gq.learningEnglish.model.enums.RandomWordsMode
+import gq.learningEnglish.model.enums.QuestionnaireModes
 import gq.learningEnglish.service.QuizUserService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,7 +14,7 @@ class QuizController(private val userQuestionnaire: QuizUserService) {
     @PostMapping("/start")
     fun startQuiz(
         @RequestParam wordCount: Int,
-        @RequestParam mode: RandomWordsMode,
+        @RequestParam mode: QuestionnaireModes,
         @RequestParam user: String
     ) = userQuestionnaire.quiz(wordCount, mode, user)
 }

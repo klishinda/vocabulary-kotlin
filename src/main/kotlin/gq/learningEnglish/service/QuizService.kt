@@ -1,8 +1,8 @@
 package gq.learningEnglish.service
 
 import gq.learningEnglish.dao.VocabularyDao
-import gq.learningEnglish.model.enums.RandomWordsMode
-import gq.learningEnglish.model.enums.RandomWordsMode.*
+import gq.learningEnglish.model.enums.QuestionnaireModes
+import gq.learningEnglish.model.enums.QuestionnaireModes.*
 import gq.learningEnglish.model.questionnaire.Answer
 import gq.learningEnglish.model.questionnaire.Question
 import org.springframework.stereotype.Service
@@ -11,20 +11,26 @@ import kotlin.math.floor
 @Service
 class QuizService(private val vocabularyDao: VocabularyDao) {
 
-    fun getRandomWords(
-        numberOfRandomWords: Int,
+    fun getWordsForQuiz(
+        numberOfWords: Int,
         userId: Long,
-        wordsMode: RandomWordsMode
+        wordsMode: QuestionnaireModes
     ): Map<Question, List<Answer>> {
-        val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfRandomWords, wordsMode)
-        return vocabularyDao.getWordsForQuiz(firstLanguageCount, secondLanguageCount, userId)
+        return when (wordsMode) {
+            LESS_USED -> vocabularyDao.getLessUsedWords(numberOfWords, userId)
+            else -> {
+                val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfWords, wordsMode)
+                vocabularyDao.getRandomWords(firstLanguageCount, secondLanguageCount, userId)
+            }
+        }
     }
 
-    private fun getWordCount(numberOfRandomWords: Int, wordsMode: RandomWordsMode): Pair<Int, Int> {
+    private fun getWordCount(numberOfRandomWords: Int, wordsMode: QuestionnaireModes): Pair<Int, Int> {
         return when (wordsMode) {
-            ENGLISH -> 0 to numberOfRandomWords
-            RUSSIAN -> numberOfRandomWords to 0
-            ABSOLUTE_RANDOM -> getNumberForRandom(numberOfRandomWords)
+            ENGLISH_RANDOM -> 0 to numberOfRandomWords
+            RUSSIAN_RANDOM -> numberOfRandomWords to 0
+            ALL_RANDOM -> getNumberForRandom(numberOfRandomWords)
+            else -> getNumberForRandom(numberOfRandomWords)
         }
     }
 
