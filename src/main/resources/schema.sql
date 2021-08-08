@@ -33,7 +33,7 @@ create table words (
 );
 alter table words add primary key (id, user_id);
 alter table words add constraint words_u1_word UNIQUE (user_id, word, language, description);
-create unique index words_ui1_word ON words(user_id, word, language, coalesce(description, 'XXXXX'));
+create unique index words_u1_id on words (user_id, word, language, coalesce(description, ''));
 alter table words add constraint words_f1 FOREIGN KEY (part_of_speech) REFERENCES parts_of_speech(id);
 
 create table vocabulary (
