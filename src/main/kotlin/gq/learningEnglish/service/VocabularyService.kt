@@ -13,7 +13,7 @@ class VocabularyService(
     private val commonDao: CommonDao
 ) {
 
-    fun addWord(newWord: Word, user: String): Long {
+    fun addWord(newWord: Word, user: String): Word {
         val userId = commonDao.getUserId(user)
         return wordsDao.addWord(newWord, userId)
     }
@@ -22,6 +22,12 @@ class VocabularyService(
         val userId = commonDao.getUserId(user)
         val firstWord = wordsDao.getWord(firstWordId, userId)
         val secondWord = wordsDao.getWord(secondWordId, userId)
+        return vocabularyDao.addVocabularyRecord(firstWord, secondWord, userId)
+    }
+
+    fun addWordsAndPair(newWords: List<Word>, user: String): Long {
+        val userId = commonDao.getUserId(user)
+        val (firstWord, secondWord) = Pair(wordsDao.addWord(newWords[0], userId), wordsDao.addWord(newWords[1], userId))
         return vocabularyDao.addVocabularyRecord(firstWord, secondWord, userId)
     }
 
