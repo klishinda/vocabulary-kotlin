@@ -48,7 +48,7 @@ alter table vocabulary add constraint vocabulary_f1 FOREIGN KEY (first_word_id, 
 alter table vocabulary add constraint vocabulary_f2 FOREIGN KEY (second_word_id, user_id) REFERENCES words(id, user_id);
 alter table vocabulary add constraint vocabulary_f3 FOREIGN KEY (user_id) REFERENCES users(id);
 alter table vocabulary add constraint vocabulary_c1_ids
-    check (check_vocabulary_unique(first_word_id, second_word_id, user_id));
+    check (check_vocabulary_unique(id, user_id, first_word_id, second_word_id));
 alter table vocabulary add constraint vocabulary_c2_languages
     check (check_diff_languages(first_word_id, second_word_id) <> 1);
 create index vocabulary_i1_first_word ON vocabulary(user_id, first_word_id);
