@@ -1,9 +1,6 @@
 package gq.learningEnglish.dao
 
-import gq.learningEnglish.common.infrastructure.JdbcDao
-import gq.learningEnglish.common.infrastructure.namedQuery
-import gq.learningEnglish.common.infrastructure.namedQueryList
-import gq.learningEnglish.common.infrastructure.queryList
+import gq.learningEnglish.common.infrastructure.*
 import gq.learningEnglish.model.mapper.QuestionnaireMapper
 import gq.learningEnglish.model.Word
 import gq.learningEnglish.model.questionnaire.Answer
@@ -101,31 +98,33 @@ private const val GET_RANDOM_WORDS =
                                                 when v.second_word_id = wrd.id then v.first_word_id
                                             end"""
 private const val GET_LESS_USED_WORDS =
-    """select wrd.id         as asking_word_id,
-           wrd.word       as asking_word,
-           wrd.description,
-           v.id           as vocabulary_id,
-           translate.id   as answer_word_id,
-           translate.word as answer_word,
-           wrd.language   as asking_language
-    from words wrd
-    join (
-        select w.id,
-               sum(case when h.asking_word = w.id then 1 else 0 end) all_calls
-        from words w
-        join vocabulary v on v.first_word_id = w.id or v.second_word_id = w.id
-        left join history h on h.vocabulary_id = v.id
-        where w.user_id = :userId
-        group by w.id, w.word, w.description
-    ) ww on ww.id = wrd.id
-    join vocabulary v on v.first_word_id = wrd.id or v.second_word_id = wrd.id
-    join words translate on translate.id =
-                            case
-                                when v.first_word_id = wrd.id then v.second_word_id
-                                when v.second_word_id = wrd.id then v.first_word_id
-                            end
-    order by all_calls, random()
-    limit :wordCount"""
+    """select x.* from (
+        select wrd.id         as asking_word_id,
+               wrd.word       as asking_word,
+               wrd.description,
+               v.id           as vocabulary_id,
+               translate.id   as answer_word_id,
+               translate.word as answer_word,
+               wrd.language   as asking_language
+        from words wrd
+        join (
+            select w.id,
+                   sum(case when h.asking_word = w.id then 1 else 0 end) all_calls
+            from words w
+            join vocabulary v on v.first_word_id = w.id or v.second_word_id = w.id
+            left join history h on h.vocabulary_id = v.id
+            where w.user_id = :userId
+            group by w.id, w.word, w.description
+        ) ww on ww.id = wrd.id
+        join vocabulary v on v.first_word_id = wrd.id or v.second_word_id = wrd.id
+        join words translate on translate.id =
+                                case
+                                    when v.first_word_id = wrd.id then v.second_word_id
+                                    when v.second_word_id = wrd.id then v.first_word_id
+                                end
+        order by all_calls, random()
+        limit :wordCount) x
+    order by random()"""
 private const val GET_TRANSLATE =
     """select * from words where id in (
         select second_word_id from vocabulary where user_id = :userId and first_word_id = :wordId
