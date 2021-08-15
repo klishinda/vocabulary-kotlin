@@ -170,22 +170,8 @@ private const val GET_WORDS_BY_PERCENTAGE =
                                          end
     order by random()"""
 private const val GET_WORDS_WITH_WRONG_ANSWER =
-    """select wrd.id         as asking_word_id,
-           wrd.word       as asking_word,
-           wrd.description,
-           v.id           as vocabulary_id,
-           translate.id   as answer_word_id,
-           translate.word as answer_word,
-           wrd.language   as asking_language
-    from words wrd
-    join vocabulary v on wrd.id in (v.first_word_id, v.second_word_id) and v.user_id = wrd.user_id
-    join words translate on translate.id =
-                                     case
-                                         when v.first_word_id = wrd.id then v.second_word_id
-                                         when v.second_word_id = wrd.id then v.first_word_id
-                                         end
-    where exists(
-                  select *
+    """with failed_words as (
+    select distinct x.asking_word
                   from (
                            select h.*,
                                   l.*,
@@ -193,14 +179,27 @@ private const val GET_WORDS_WITH_WRONG_ANSWER =
                                   over (partition by h.vocabulary_id, h.asking_word order by l.finish_time desc) as rnk
                            from history h
                                     join launches l on l.id = h.launch_id
-                           where l.user_id = :userId
+                           where l.user_id = 101
                            order by h.vocabulary_id, h.asking_word
                        ) x
-                  where x.vocabulary_id = v.id
-                    and x.asking_word = wrd.id
-                    and x.rnk < :rank
+                  where x.rnk < :rank
                     and x.result = false
-              )
+        )
+    select wrd.id         as asking_word_id,
+           wrd.word       as asking_word,
+           wrd.description,
+           v.id           as vocabulary_id,
+           translate.id   as answer_word_id,
+           translate.word as answer_word,
+           wrd.language   as asking_language
+    from vocabulary v
+    join failed_words f on f.asking_word in (v.first_word_id, v.second_word_id)
+    join words wrd on wrd.id = f.asking_word
+    join words translate on translate.id =
+                                     case
+                                         when v.first_word_id = wrd.id then v.second_word_id
+                                         when v.second_word_id = wrd.id then v.first_word_id
+                                         end
     order by random()"""
 private const val GET_TRANSLATE =
     """select * from words where id in (
