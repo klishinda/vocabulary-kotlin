@@ -44,6 +44,16 @@ class VocabularyDao(private var jdbc: JdbcDao) {
         return jdbc.namedQuery(GET_LESS_USED_WORDS, QuestionnaireMapper(), sqlParams)
     }
 
+    fun getWordsByPercentage(percentage: Int, userId: Long): Map<Question, List<Answer>> {
+        val sqlParams = MapSqlParameterSource(
+            mapOf(
+                "percentage" to percentage,
+                "userId" to userId
+            )
+        )
+        return jdbc.namedQuery(GET_WORDS_BY_PERCENTAGE, QuestionnaireMapper(), sqlParams)
+    }
+
     fun getTranslate(wordId: Long, userId: Long): List<Word>? {
         val sqlParams = MapSqlParameterSource(
             mapOf(
@@ -125,6 +135,29 @@ private const val GET_LESS_USED_WORDS =
         order by all_calls, random()
         limit :wordCount) x
     order by random()"""
+private const val GET_WORDS_BY_PERCENTAGE =
+    """select wrd.id         as asking_word_id,
+       wrd.word       as asking_word,
+       wrd.description,
+       v.id           as vocabulary_id,
+       translate.id   as answer_word_id,
+       translate.word as answer_word,
+       wrd.language   as asking_language
+from (select h.vocabulary_id, h.asking_word
+      from history h
+               join launches l on l.id = h.launch_id
+          and l.user_id = :userId
+      group by h.vocabulary_id, h.asking_word
+      having cast(sum(case when h.result then 1 else 0 end) as decimal(3, 2))
+                 / cast(count(*) as decimal(3, 2)) * 100 <= :percentage
+     ) percent_words
+         join words wrd on wrd.id = percent_words.asking_word
+         join vocabulary v on v.id = percent_words.vocabulary_id
+         join words translate on translate.id =
+                                 case
+                                     when v.first_word_id = wrd.id then v.second_word_id
+                                     when v.second_word_id = wrd.id then v.first_word_id
+                                     end"""
 private const val GET_TRANSLATE =
     """select * from words where id in (
         select second_word_id from vocabulary where user_id = :userId and first_word_id = :wordId

@@ -16,9 +16,14 @@ class QuizUserService(
     private val commonDao: CommonDao
 ) : Logger {
 
-    fun quiz(numberOfWords: Int, wordsMode: QuestionnaireModes, username: String) {
+    fun quiz(
+        numberOfWords: Int?,
+        percentage: Int?,
+        wordsMode: QuestionnaireModes,
+        username: String
+    ) {
         val userId = commonDao.getUserId(username)
-        val quizMap = quizService.getWordsForQuiz(numberOfWords, userId, wordsMode)
+        val quizMap = quizService.getWordsForQuiz(numberOfWords, percentage, userId, wordsMode)
         log.info("Let's start! Write translation to the next words (${quizMap.size} total)")
         quizMap.forEach { (question, answers) ->
             println("${question.askingWord} ${question.description.orEmpty()}")
