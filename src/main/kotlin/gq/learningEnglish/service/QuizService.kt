@@ -20,6 +20,7 @@ class QuizService(private val vocabularyDao: VocabularyDao) {
         return when (wordsMode) {
             LESS_USED -> vocabularyDao.getLessUsedWords(numberOfWords!!, userId)
             PERCENTAGE_OF_CORRECT_ANSWERS -> vocabularyDao.getWordsByPercentage(percentage!!, userId)
+            WRONG_ANSWER_FOR_THE_LAST_WORDS -> vocabularyDao.getWordsWithWrongAnswer(numberOfWords!!, userId)
             else -> {
                 val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfWords!!, wordsMode)
                 vocabularyDao.getRandomWords(firstLanguageCount, secondLanguageCount, userId)

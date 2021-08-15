@@ -54,6 +54,16 @@ class VocabularyDao(private var jdbc: JdbcDao) {
         return jdbc.namedQuery(GET_WORDS_BY_PERCENTAGE, QuestionnaireMapper(), sqlParams)
     }
 
+    fun getWordsWithWrongAnswer(lastWordsNumber: Int, userId: Long): Map<Question, List<Answer>> {
+        val sqlParams = MapSqlParameterSource(
+            mapOf(
+                "rank" to lastWordsNumber,
+                "userId" to userId
+            )
+        )
+        return jdbc.namedQuery(GET_WORDS_WITH_WRONG_ANSWER, QuestionnaireMapper(), sqlParams)
+    }
+
     fun getTranslate(wordId: Long, userId: Long): List<Word>? {
         val sqlParams = MapSqlParameterSource(
             mapOf(
@@ -137,27 +147,61 @@ private const val GET_LESS_USED_WORDS =
     order by random()"""
 private const val GET_WORDS_BY_PERCENTAGE =
     """select wrd.id         as asking_word_id,
-       wrd.word       as asking_word,
-       wrd.description,
-       v.id           as vocabulary_id,
-       translate.id   as answer_word_id,
-       translate.word as answer_word,
-       wrd.language   as asking_language
-from (select h.vocabulary_id, h.asking_word
-      from history h
-               join launches l on l.id = h.launch_id
-          and l.user_id = :userId
-      group by h.vocabulary_id, h.asking_word
-      having cast(sum(case when h.result then 1 else 0 end) as decimal(3, 2))
-                 / cast(count(*) as decimal(3, 2)) * 100 <= :percentage
-     ) percent_words
-         join words wrd on wrd.id = percent_words.asking_word
-         join vocabulary v on v.id = percent_words.vocabulary_id
-         join words translate on translate.id =
-                                 case
-                                     when v.first_word_id = wrd.id then v.second_word_id
-                                     when v.second_word_id = wrd.id then v.first_word_id
-                                     end"""
+           wrd.word       as asking_word,
+           wrd.description,
+           v.id           as vocabulary_id,
+           translate.id   as answer_word_id,
+           translate.word as answer_word,
+           wrd.language   as asking_language
+    from (select h.vocabulary_id, h.asking_word
+          from history h
+                   join launches l on l.id = h.launch_id
+              and l.user_id = :userId
+          group by h.vocabulary_id, h.asking_word
+          having cast(sum(case when h.result then 1 else 0 end) as decimal(3, 2))
+                     / cast(count(*) as decimal(3, 2)) * 100 <= :percentage
+         ) percent_words
+             join words wrd on wrd.id = percent_words.asking_word
+             join vocabulary v on v.id = percent_words.vocabulary_id
+             join words translate on translate.id =
+                                     case
+                                         when v.first_word_id = wrd.id then v.second_word_id
+                                         when v.second_word_id = wrd.id then v.first_word_id
+                                         end
+    order by random()"""
+private const val GET_WORDS_WITH_WRONG_ANSWER =
+    """select wrd.id         as asking_word_id,
+           wrd.word       as asking_word,
+           wrd.description,
+           v.id           as vocabulary_id,
+           translate.id   as answer_word_id,
+           translate.word as answer_word,
+           wrd.language   as asking_language
+    from words wrd
+    join vocabulary v on wrd.id in (v.first_word_id, v.second_word_id) and v.user_id = wrd.user_id
+    join words translate on translate.id =
+                                     case
+                                         when v.first_word_id = wrd.id then v.second_word_id
+                                         when v.second_word_id = wrd.id then v.first_word_id
+                                         end
+    where exists(
+                  select *
+                  from (
+                           select h.*,
+                                  l.*,
+                                  row_number()
+                                  over (partition by h.vocabulary_id, h.asking_word order by l.finish_time desc) as rnk
+                           from history h
+                                    join launches l on l.id = h.launch_id
+                           where l.user_id = :userId
+                           order by h.vocabulary_id, h.asking_word
+                       ) x
+                  where x.vocabulary_id = v.id
+                    and x.asking_word = wrd.id
+                    and x.rnk < :rank
+                    and x.result = false
+              )
+    order by random()"""
 private const val GET_TRANSLATE =
     """select * from words where id in (
         select second_word_id from vocabulary where user_id = :userId and first_word_id = :wordId
