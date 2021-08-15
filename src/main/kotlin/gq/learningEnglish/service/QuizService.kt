@@ -12,14 +12,17 @@ import kotlin.math.floor
 class QuizService(private val vocabularyDao: VocabularyDao) {
 
     fun getWordsForQuiz(
-        numberOfWords: Int,
+        numberOfWords: Int?,
+        percentage: Int?,
         userId: Long,
         wordsMode: QuestionnaireModes
     ): Map<Question, List<Answer>> {
         return when (wordsMode) {
-            LESS_USED -> vocabularyDao.getLessUsedWords(numberOfWords, userId)
+            LESS_USED -> vocabularyDao.getLessUsedWords(numberOfWords!!, userId)
+            PERCENTAGE_OF_CORRECT_ANSWERS -> vocabularyDao.getWordsByPercentage(percentage!!, userId)
+            WRONG_ANSWER_FOR_THE_LAST_WORDS -> vocabularyDao.getWordsWithWrongAnswer(numberOfWords!!, userId)
             else -> {
-                val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfWords, wordsMode)
+                val (firstLanguageCount, secondLanguageCount) = getWordCount(numberOfWords!!, wordsMode)
                 vocabularyDao.getRandomWords(firstLanguageCount, secondLanguageCount, userId)
             }
         }

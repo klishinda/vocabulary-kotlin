@@ -13,8 +13,9 @@ class QuizController(private val userQuestionnaire: QuizUserService) {
 
     @PostMapping("/start")
     fun startQuiz(
-        @RequestParam wordCount: Int,
+        @RequestParam (value = "wordCount", required=false) wordCount: Int?,
+        @RequestParam (value = "percentage", required=false) percentage: Int?,
         @RequestParam mode: QuestionnaireModes,
         @RequestParam user: String
-    ) = userQuestionnaire.quiz(wordCount, mode, user)
+    ) = userQuestionnaire.quiz(wordCount, percentage, mode, user)
 }
