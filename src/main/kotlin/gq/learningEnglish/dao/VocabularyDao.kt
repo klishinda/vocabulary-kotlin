@@ -64,7 +64,7 @@ class VocabularyDao(private var jdbc: JdbcDao) {
         return jdbc.namedQuery(GET_WORDS_WITH_WRONG_ANSWER, QuestionnaireMapper(), sqlParams)
     }
 
-    fun getTranslate(wordId: Long, userId: Long): List<Word>? {
+    fun getTranslate(wordId: Long, userId: Long): List<Word> {
         val sqlParams = MapSqlParameterSource(
             mapOf(
                 "wordId" to wordId,
@@ -74,7 +74,7 @@ class VocabularyDao(private var jdbc: JdbcDao) {
         return jdbc.namedQueryList(GET_TRANSLATE, sqlParams)
     }
 
-    fun getUnusedWords(): List<Word>? = jdbc.queryList(UNUSED_WORDS)
+    fun getUnusedWords(): List<Word> = jdbc.queryList(UNUSED_WORDS)
 }
 
 private const val ADD_VOCABULARY_PAIR =
